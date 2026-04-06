@@ -1133,13 +1133,137 @@ function renderAllSongs() {
 }
 
 // ===== Tab 3: Artist index =====
+
+// ふりがなマッピング（五十音ソート用）
+const artistReading = {
+  "ABBA":"ABBA","AKB48":"AKB48","AKINO":"AKINO","alan":"alan","Andy Williams":"Andy Williams",
+  "Annie":"Annie","Barbra Streisand":"Barbra Streisand","Belinda Carlisle":"Belinda Carlisle",
+  "Billy Joel":"Billy Joel","Boz Scaggs":"Boz Scaggs","B.B.クイーンズ":"びーびーくいーんず",
+  "BEGIN":"BEGIN","Bette Midler":"Bette Midler","BoA":"BoA","Carole King":"Carole King",
+  "Carpenters":"Carpenters","Celine Dion":"Celine Dion","Celtic Woman":"Celtic Woman",
+  "CHAGE and ASKA":"CHAGE and ASKA","charlene":"charlene","DALI":"DALI",
+  "Debbie Gibson":"Debbie Gibson","Debbie Reynolds":"Debbie Reynolds","Diana Ross":"Diana Ross",
+  "Disney":"Disney","Dream Ami":"Dream Ami","DREAMS COME TRUE":"DREAMS COME TRUE",
+  "DA PUMP":"DA PUMP","Eagles":"Eagles","Elton John":"Elton John","Elvis Presley":"Elvis Presley",
+  "Engelbert Humperdinck":"Engelbert Humperdinck","Enya":"Enya",
+  "Every Little Thing":"Every Little Thing","EXILE":"EXILE","Foorin":"Foorin",
+  "Frank Sinatra":"Frank Sinatra","globe":"globe","H2O":"H2O","HY":"HY","I WiSH":"I WiSH",
+  "John Lennon":"John Lennon","Journey":"Journey","Judy Garland":"Judy Garland","JUJU":"JUJU",
+  "Julie Andrews":"Julie Andrews","Kalafina":"Kalafina","KAN":"KAN","Kiroro":"Kiroro",
+  "KOKIA":"KOKIA","L'Arc~en~Ciel":"L'Arc~en~Ciel","Lisa":"Lisa","Le Couple":"Le Couple",
+  "Louis Armstrong":"Louis Armstrong","mao":"mao","Mariah Carey":"Mariah Carey",
+  "Mary Macgregor":"Mary Macgregor","MAX":"MAX","May J.":"May J.","May'n/中島愛":"May'n/なかじまめぐみ",
+  "MISIA":"MISIA","My Little Lover":"My Little Lover","mona":"mona","Nat King Cole":"Nat King Cole",
+  "NOKKO":"NOKKO","The Nolans":"The Nolans","Norah Jones":"Norah Jones",
+  "Olivia Newton-John":"Olivia Newton-John","Patti Page":"Patti Page","Peggy March":"Peggy March",
+  "Perfume":"Perfume","PRINCESS PRINCESS":"PRINCESS PRINCESS","Procol Harum":"Procol Harum",
+  "RUI":"RUI","Sarah Brightman":"Sarah Brightman","Sarah McLachlan":"Sarah McLachlan",
+  "See-Saw":"See-Saw","Simon & Garfunkel":"Simon & Garfunkel","SMAP":"SMAP","Smile dk":"Smile dk",
+  "SPEED":"SPEED","Sting":"Sting","supercell":"supercell","Superfly":"Superfly",
+  "The Beatles":"The Beatles","THE BOOM":"THE BOOM","the ドリフターズ":"the どりふたーず",
+  "V6":"V6","Whiteberry":"Whiteberry","Whitney Houston":"Whitney Houston","XJAPAN":"XJAPAN",
+  "ZARD":"ZARD","ZONE":"ZONE","MAHO堂":"まほうどう","NHKおかあさんといっしょ":"えぬえいちけいおかあさんといっしょ",
+  "あいみょん":"あいみょん","アイルランド民謡":"あいるらんどみんよう","藍井エイル":"あおいえいる",
+  "青い三角定規":"あおいさんかくじょうぎ","赤い鳥":"あかいとり","秋川雅史":"あきかわまさふみ",
+  "麻丘めぐみ":"あさおかめぐみ","中孝介":"あたりこうすけ","あべ静江":"あべしずえ",
+  "あみん":"あみん","安室奈美恵":"あむろなみえ","絢香":"あやか","絢香×コブクロ":"あやかこぶくろ",
+  "アン・ルイス":"あんるいす","アンジェラ・アキ":"あんじぇらあき","杏里":"あんり",
+  "飯島真理":"いいじままり","いきものがかり":"いきものがかり","石川さゆり":"いしかわさゆり",
+  "石川ひとみ":"いしかわひとみ","石川優子＆チャゲ":"いしかわゆうこあんどちゃげ",
+  "いしだあゆみ":"いしだあゆみ","一城みゆ希":"いちじょうみゆき","五輪真弓":"いつわまゆみ",
+  "伊東恵里":"いとうえり","伊藤由奈":"いとうゆな","井上あずみ":"いのうえあずみ",
+  "井上陽水":"いのうえようすい","今井ゆうぞう・はいだしょうこ":"いまいゆうぞうはいだしょうこ",
+  "今井美樹":"いまいみき","イルカ":"いるか","岩崎宏美":"いわさきひろみ",
+  "岩崎良美":"いわさきよしみ","宇多田ヒカル":"うただひかる","宇野ゆう子":"うのゆうこ",
+  "欧陽菲菲":"おうやんふぃーふぃー","大黒摩季":"おおぐろまき","大杉久美子":"おおすぎくみこ",
+  "小田和正":"おだかずまさ","太田裕美":"おおたひろみ","大塚愛":"おおつかあい",
+  "大橋純子":"おおはしじゅんこ","大橋のぞみ":"おおはしのぞみ","岡田有希子":"おかだゆきこ",
+  "岡村孝子":"おかむらたかこ","岡本真夜":"おかもとまよ","荻野目洋子":"おぎのめようこ",
+  "奥井亜紀":"おくいあき","奥華子":"おくはなこ","小椋佳":"おぐらけい",
+  "尾崎豊":"おざきゆたか","鬼束ちひろ":"おにつかちひろ","陰陽座":"おんみょうざ",
+  "柏原芳恵":"かしわばらよしえ","合唱曲":"がっしょうきょく","加藤登紀子":"かとうときこ",
+  "薫と友樹、たまにムック。":"かおるとともき","門倉有希":"かどくらゆき",
+  "上高田少年合唱団":"かみたかだしょうねんがっしょうだん","神田沙也加":"かんださやか",
+  "岸洋子":"きしようこ","木村弓":"きむらゆみ","きゃりーぱみゅぱみゅ":"きゃりーぱみゅぱみゅ",
+  "キャンディーズ":"きゃんでぃーず","桐谷健太":"きりたにけんた","久保田早紀":"くぼたさき",
+  "久保田利伸":"くぼたとしのぶ","桑田佳祐":"くわたけいすけ","劇団四季":"げきだんしき",
+  "コアラモード.":"こあらもーど","コブクロ":"こぶくろ","小泉今日子":"こいずみきょうこ",
+  "倖田來未":"こうだくみ","国生さゆり":"こくしょうさゆり","越路吹雪":"こしじふぶき",
+  "小林麻美":"こばやしあさみ","小林明子":"こばやしあきこ","小此木麻里":"おこのぎまり",
+  "小此木麻里・畠中洋":"おこのぎまりはたなかひろし","小坂明子":"こさかあきこ",
+  "米米CLUB":"こめこめくらぶ","西城秀樹":"さいじょうひでき","斉藤由貴":"さいとうゆき",
+  "斉藤和義":"さいとうかずよし","酒井法子":"さかいのりこ","サーカス":"さーかす",
+  "榊原郁恵":"さかきばらいくえ","坂田おさむ・坂田めぐみ":"さかたおさむさかためぐみ",
+  "坂本九":"さかもときゅう","坂本冬美":"さかもとふゆみ","ささきいさお":"ささきいさお",
+  "サザンオールスターズ":"さざんおーるすたーず","さだまさし":"さだまさし",
+  "さとう宗幸":"さとうむねゆき","ザ・ピーナッツ":"ざぴーなっつ","沢田知可子":"さわだちかこ",
+  "サラ・オレイン":"さらおれいん","柴崎コウ":"しばさきこう","柴矢裕美":"しばやひろみ",
+  "島谷ひとみ":"しまたにひとみ","島本須美":"しまもとすみ","下成佐登子":"しもなりさとこ",
+  "子門 真人":"しもんまさと","上々颱風":"しゃんしゃんたいふーん",
+  "ジュディ・オング":"じゅでぃおんぐ","唱歌・抒情歌":"しょうかじょじょうか",
+  "スターダストレビュー":"すたーだすとれびゅー","菅田将暉":"すだまさき",
+  "砂川恵理歌":"すなかわえりか","スピッツ":"すぴっつ","関ゆみこ":"せきゆみこ",
+  "高橋真梨子":"たかはしまりこ","高橋洋子":"たかはしようこ","竹内まりや":"たけうちまりや",
+  "谷山浩子":"たにやまひろこ","玉置浩二":"たまきこうじ","チェリッシュ":"ちぇりっしゅ",
+  "つじあやの":"つじあやの","つるの 剛士":"つるのたけし","手嶌葵":"てしまあおい",
+  "手嶌葵 & 平井堅":"てしまあおいひらいけん","テレサテン":"てれさてん",
+  "土居裕子":"どいゆうこ","童謡":"どうよう","徳永英明":"とくながひであき",
+  "トワ・エ・モア":"とわえもあ","とんねるず":"とんねるず",
+  "中孝介・森山直太朗":"あたりこうすけもりやまなおたろう","永井真理子":"ながいまりこ",
+  "中島美嘉":"なかしまみか","中島みゆき":"なかじまみゆき","なかにし鈴子":"なかにしすずこ",
+  "中村由真":"なかむらゆま","中森明菜":"なかもりあきな","中山美穂＆WANDS":"なかやまみほわんず",
+  "夏川りみ":"なつかわりみ","中嶋義実・ヤング・フレッシュ":"なかじまよしみやんぐふれっしゅ",
+  "二階堂和美":"にかいどうかずみ","西田佐知子":"にしださちこ","秦基博":"はたもとひろ",
+  "倍賞千恵子":"ばいしょうちえこ","浜崎あゆみ":"はまさきあゆみ","ハムちゃんず":"はむちゃんず",
+  "花は咲くプロジェクト":"はなはさくぷろじぇくと","原田知世":"はらだともよ",
+  "速水けんたろう":"はやみけんたろう","光GENJI":"ひかるげんじ","久松史奈":"ひさまつふみな",
+  "一青窈":"ひととよう","平井堅":"ひらいけん","平原綾香":"ひらはらあやか",
+  "広瀬香美":"ひろせこうみ","ピンクレディー":"ぴんくれでぃー",
+  "ビューティー・ペア":"びゅーてぃーぺあ","布施明":"ふせあきら","ペギー葉山":"ぺぎーはやま",
+  "ベッツィ&クリス":"べっつぃくりす","ボビー":"ぼびー","本田美奈子":"ほんだみなこ",
+  "本名陽子":"ほんなようこ","槇原敬之":"まきはらのりゆき","松平健":"まつだいらけん",
+  "松たか子":"まつたかこ","松田聖子":"まつだせいこ","松谷裕子":"まつたにゆうこ",
+  "松任谷由実":"まつとうやゆみ","前川陽子":"まえかわようこ","黛ジュン":"まゆずみじゅん",
+  "水木一郎":"みずきいちろう","美空ひばり":"みそらひばり","米良美一":"めらよしかず",
+  "モーニング娘。":"もーにんぐむすめ","森口博子":"もりぐちひろこ","森高千里":"もりたかちさと",
+  "森山直太朗":"もりやまなおたろう","矢島美容室":"やじまびようしつ",
+  "屋比久知奈":"やびくともな","横山だいすけ":"よこやまだいすけ",
+  "ランカ・リー＝中島愛":"らんかりーなかじまめぐみ","レベッカ":"れべっか",
+  "八神純子":"やがみじゅんこ","薬師丸ひろ子":"やくしまるひろこ","山口百恵":"やまぐちももえ",
+  "山崎まさよし":"やまざきまさよし","山田美也子":"やまだみやこ",
+  "山野さと子・東京放送児童合唱団":"やまのさとこ","吉幾三":"よしいくぞう",
+  "渡辺真知子":"わたなべまちこ","渡辺美里":"わたなべみさと"
+};
+
+const gyouOrder = ['あ行','か行','さ行','た行','な行','は行','ま行','や行','ら行','わ行','A-Z'];
+function getGyou(reading) {
+  if (!reading) return 'その他';
+  const ch = reading.charAt(0);
+  if (/[A-Za-z0-9]/.test(ch)) return 'A-Z';
+  if ('あいうえおぁぃぅぇぉ'.includes(ch)) return 'あ行';
+  if ('かきくけこがぎぐげご'.includes(ch)) return 'か行';
+  if ('さしすせそざじずぜぞ'.includes(ch)) return 'さ行';
+  if ('たちつてとだぢづでど'.includes(ch)) return 'た行';
+  if ('なにぬねの'.includes(ch)) return 'な行';
+  if ('はひふへほばびぶべぼぱぴぷぺぽ'.includes(ch)) return 'は行';
+  if ('まみむめも'.includes(ch)) return 'ま行';
+  if ('やゆよ'.includes(ch)) return 'や行';
+  if ('らりるれろ'.includes(ch)) return 'ら行';
+  if ('わをん'.includes(ch)) return 'わ行';
+  return 'その他';
+}
+
 function buildArtistData() {
   const map = {};
   songs.forEach(s => {
     if (!map[s[2]]) map[s[2]] = [];
     map[s[2]].push(s);
   });
-  const artists = Object.keys(map).sort((a, b) => a.localeCompare(b, 'ja'));
+  const artists = Object.keys(map).sort((a, b) => {
+    const ra = (artistReading[a] || a).toLowerCase();
+    const rb = (artistReading[b] || b).toLowerCase();
+    return ra.localeCompare(rb, 'ja');
+  });
   return { map, artists };
 }
 
@@ -1149,18 +1273,12 @@ function showArtistList() {
   document.getElementById('artistDetailView').style.display = 'none';
   document.getElementById('artistCountLabel').textContent = '全 ' + artists.length + ' アーティスト';
 
-  // Group by first character type
   let html = '';
   let lastGroup = '';
 
   artists.forEach(name => {
-    const first = name.charAt(0);
-    let group;
-    if (/[A-Za-z]/.test(first)) group = 'A-Z';
-    else if (/[ぁ-ん]/.test(first)) group = 'あ行〜';
-    else if (/[ァ-ヶ]/.test(first)) group = 'ア行〜';
-    else if (/[一-龥]/.test(first)) group = '漢字';
-    else group = 'その他';
+    const reading = artistReading[name] || name;
+    const group = getGyou(reading.toLowerCase());
 
     if (group !== lastGroup) {
       html += '<div class="artist-group-header">' + escapeHtml(group) + '</div>';
