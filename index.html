@@ -16,12 +16,13 @@ body {
   background: #fdf6f0;
   color: #333;
   min-height: 100vh;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: 70px;
 }
 
+/* ===== Header ===== */
 .header {
   background: linear-gradient(135deg, #f8a4c8, #a8d8ea);
-  padding: 20px 16px 12px;
+  padding: 16px 16px 12px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -29,11 +30,11 @@ body {
 }
 
 .header h1 {
-  font-size: 18px;
+  font-size: 17px;
   color: #fff;
   text-align: center;
   text-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .search-box {
@@ -42,7 +43,7 @@ body {
 
 .search-box input {
   width: 100%;
-  padding: 12px 16px 12px 40px;
+  padding: 11px 16px 11px 38px;
   border: none;
   border-radius: 24px;
   font-size: 16px;
@@ -52,19 +53,63 @@ body {
   -webkit-appearance: none;
 }
 
-.search-box input::placeholder {
-  color: #aaa;
-}
+.search-box input::placeholder { color: #aaa; }
 
 .search-box .search-icon {
   position: absolute;
-  left: 14px;
+  left: 13px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 16px;
+  font-size: 15px;
   color: #bbb;
 }
 
+/* ===== Bottom Tab Bar ===== */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  display: flex;
+  border-top: 1px solid #e8e8e8;
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0 8px;
+  font-size: 11px;
+  color: #aaa;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+  border: none;
+  background: none;
+}
+
+.tab-item .tab-icon {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tab-item.active {
+  color: #e87aaa;
+}
+
+/* ===== Tab Content ===== */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ===== Stats bar ===== */
 .stats {
   display: flex;
   justify-content: space-between;
@@ -91,6 +136,7 @@ body {
   background: #fff5f9;
 }
 
+/* ===== Song cards ===== */
 .song-list {
   padding: 0 12px 24px;
 }
@@ -104,11 +150,6 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: transform 0.1s;
-}
-
-.song-card:active {
-  transform: scale(0.98);
 }
 
 .song-num {
@@ -164,9 +205,114 @@ body {
   margin-bottom: 12px;
 }
 
+/* ===== Artist filter chips (search tab) ===== */
+.artist-filter {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.artist-filter::-webkit-scrollbar { display: none; }
+
+.artist-chip {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.artist-chip.active {
+  border-color: #f8a4c8;
+  background: #fff5f9;
+  color: #e87aaa;
+}
+
+/* ===== Artist list (artist tab) ===== */
+.artist-index {
+  padding: 8px 12px 24px;
+}
+
+.artist-group-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e87aaa;
+  padding: 12px 4px 6px;
+  border-bottom: 1px solid #f0e0e8;
+  margin-bottom: 6px;
+}
+
+.artist-row {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.artist-row:active {
+  transform: scale(0.98);
+}
+
+.artist-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.artist-count {
+  font-size: 13px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.artist-songs {
+  display: none;
+  padding: 0 0 8px;
+}
+
+.artist-songs.open {
+  display: block;
+}
+
+.artist-songs .song-card {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  margin: 12px 12px 4px;
+  border: none;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #e87aaa;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Scroll to top ===== */
 .scroll-top {
   position: fixed;
-  bottom: 24px;
+  bottom: 72px;
   right: 16px;
   width: 44px;
   height: 44px;
@@ -188,65 +334,96 @@ body {
   display: flex;
 }
 
-.artist-filter {
-  display: flex;
-  gap: 6px;
-  padding: 8px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+/* ===== Artist detail view ===== */
+.artist-detail-header {
+  text-align: center;
+  padding: 16px;
 }
 
-.artist-filter::-webkit-scrollbar {
-  display: none;
+.artist-detail-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
 }
 
-.artist-chip {
-  flex-shrink: 0;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #666;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  white-space: nowrap;
-}
-
-.artist-chip.active {
-  border-color: #f8a4c8;
-  background: #fff5f9;
-  color: #e87aaa;
+.artist-detail-count {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
 }
 </style>
 </head>
 <body>
 
+<!-- ===== Header ===== -->
 <div class="header">
   <h1>あさがおねえさん 歌える曲リスト</h1>
-  <div class="search-box">
+  <div class="search-box" id="searchBoxWrap">
     <span class="search-icon">&#128269;</span>
     <input type="text" id="searchInput" placeholder="曲名・アーティスト名で検索..." autocomplete="off">
   </div>
 </div>
 
-<div class="artist-filter" id="artistFilter"></div>
-
-<div class="stats">
-  <span id="countLabel">全 553 曲</span>
-  <div style="display:flex;gap:6px;">
-    <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
-    <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
-    <button class="sort-btn" data-sort="artist" onclick="setSort('artist')">歌手順</button>
+<!-- ===== Tab 1: Search ===== -->
+<div class="tab-content active" id="tabSearch">
+  <div class="artist-filter" id="artistFilter"></div>
+  <div class="stats">
+    <span id="countLabel">全 553 曲</span>
+    <div style="display:flex;gap:6px;">
+      <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
+      <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
+      <button class="sort-btn" data-sort="artist" onclick="setSort('artist')">歌手順</button>
+    </div>
+  </div>
+  <div class="song-list" id="songList"></div>
+  <div class="no-results" id="noResults" style="display:none;">
+    <div class="emoji">&#128270;</div>
+    <div>一致する曲が見つかりませんでした</div>
   </div>
 </div>
 
-<div class="song-list" id="songList"></div>
+<!-- ===== Tab 2: All songs ===== -->
+<div class="tab-content" id="tabAll">
+  <div class="stats">
+    <span>全 553 曲（番号順）</span>
+  </div>
+  <div class="song-list" id="allSongList"></div>
+</div>
 
-<div class="no-results" id="noResults" style="display:none;">
-  <div class="emoji">&#128270;</div>
-  <div>一致する曲が見つかりませんでした</div>
+<!-- ===== Tab 3: Artist index ===== -->
+<div class="tab-content" id="tabArtist">
+  <!-- Artist list view -->
+  <div id="artistListView">
+    <div class="stats">
+      <span id="artistCountLabel"></span>
+    </div>
+    <div class="artist-index" id="artistIndex"></div>
+  </div>
+  <!-- Artist detail view -->
+  <div id="artistDetailView" style="display:none;">
+    <button class="back-btn" onclick="showArtistList()">&#9664; 歌手一覧に戻る</button>
+    <div class="artist-detail-header">
+      <div class="artist-detail-name" id="detailArtistName"></div>
+      <div class="artist-detail-count" id="detailArtistCount"></div>
+    </div>
+    <div class="song-list" id="detailSongList"></div>
+  </div>
+</div>
+
+<!-- ===== Bottom Tab Bar ===== -->
+<div class="tab-bar">
+  <button class="tab-item active" onclick="switchTab('search')">
+    <span class="tab-icon">&#128269;</span>
+    検索
+  </button>
+  <button class="tab-item" onclick="switchTab('all')">
+    <span class="tab-icon">&#127925;</span>
+    全曲一覧
+  </button>
+  <button class="tab-item" onclick="switchTab('artist')">
+    <span class="tab-icon">&#127908;</span>
+    歌手一覧
+  </button>
 </div>
 
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
@@ -808,39 +985,7 @@ const songs = [
   [553,"サマータイムブルース","渡辺美里"]
 ];
 
-// Top artists for filter chips
-const topArtists = ["松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
-
-let currentSort = 'num';
-let currentArtist = '';
-
-const searchInput = document.getElementById('searchInput');
-const songListEl = document.getElementById('songList');
-const noResultsEl = document.getElementById('noResults');
-const countLabel = document.getElementById('countLabel');
-const scrollTopBtn = document.getElementById('scrollTop');
-const artistFilterEl = document.getElementById('artistFilter');
-
-// Build artist filter chips
-topArtists.forEach(artist => {
-  const chip = document.createElement('button');
-  chip.className = 'artist-chip';
-  chip.textContent = artist;
-  chip.onclick = () => {
-    if (currentArtist === artist) {
-      currentArtist = '';
-      chip.classList.remove('active');
-    } else {
-      currentArtist = artist;
-      document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-    }
-    searchInput.value = '';
-    render();
-  };
-  artistFilterEl.appendChild(chip);
-});
-
+// ===== Utility =====
 function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -852,12 +997,87 @@ function highlight(text, query) {
   return escaped.replace(new RegExp(q, 'gi'), m => '<mark>' + m + '</mark>');
 }
 
-function render() {
+function songCardHtml(s, query) {
+  return '<div class="song-card">' +
+    '<div class="song-num">' + s[0] + '</div>' +
+    '<div class="song-info">' +
+      '<div class="song-title">' + highlight(s[1], query || '') + '</div>' +
+      '<div class="song-artist">' + highlight(s[2], query || '') + '</div>' +
+    '</div></div>';
+}
+
+// ===== Tab switching =====
+let currentTab = 'search';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-item').forEach((el, i) => {
+    el.classList.toggle('active', ['search','all','artist'][i] === tab);
+  });
+  document.getElementById('tabSearch').classList.toggle('active', tab === 'search');
+  document.getElementById('tabAll').classList.toggle('active', tab === 'all');
+  document.getElementById('tabArtist').classList.toggle('active', tab === 'artist');
+
+  // Show/hide search box
+  document.getElementById('searchBoxWrap').style.display = tab === 'search' ? 'block' : 'none';
+
+  window.scrollTo({top: 0});
+
+  if (tab === 'all') renderAllSongs();
+  if (tab === 'artist') { showArtistList(); }
+}
+
+// ===== Tab 1: Search =====
+const topArtists = ["松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
+
+let currentSort = 'num';
+let currentArtistFilter = '';
+
+const searchInput = document.getElementById('searchInput');
+const songListEl = document.getElementById('songList');
+const noResultsEl = document.getElementById('noResults');
+const countLabel = document.getElementById('countLabel');
+const artistFilterEl = document.getElementById('artistFilter');
+
+// 「一覧」ボタン（フィルター解除）
+const allChip = document.createElement('button');
+allChip.className = 'artist-chip active';
+allChip.textContent = '一覧';
+allChip.onclick = () => {
+  currentArtistFilter = '';
+  searchInput.value = '';
+  document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
+  allChip.classList.add('active');
+  renderSearch();
+};
+artistFilterEl.appendChild(allChip);
+
+topArtists.forEach(artist => {
+  const chip = document.createElement('button');
+  chip.className = 'artist-chip';
+  chip.textContent = artist;
+  chip.onclick = () => {
+    if (currentArtistFilter === artist) {
+      currentArtistFilter = '';
+      chip.classList.remove('active');
+      allChip.classList.add('active');
+    } else {
+      currentArtistFilter = artist;
+      document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    }
+    searchInput.value = '';
+    renderSearch();
+  };
+  artistFilterEl.appendChild(chip);
+});
+
+function renderSearch() {
   const query = searchInput.value.trim().toLowerCase();
   let filtered;
 
-  if (currentArtist) {
-    filtered = songs.filter(s => s[2] === currentArtist);
+  if (currentArtistFilter) {
+    filtered = songs.filter(s => s[2] === currentArtistFilter);
   } else if (query) {
     filtered = songs.filter(s =>
       s[1].toLowerCase().includes(query) ||
@@ -867,7 +1087,6 @@ function render() {
     filtered = songs.slice();
   }
 
-  // Sort
   if (currentSort === 'title') {
     filtered.sort((a, b) => a[1].localeCompare(b[1], 'ja'));
   } else if (currentSort === 'artist') {
@@ -876,7 +1095,7 @@ function render() {
     filtered.sort((a, b) => a[0] - b[0]);
   }
 
-  countLabel.textContent = query || currentArtist
+  countLabel.textContent = query || currentArtistFilter
     ? filtered.length + ' 件ヒット / 全 ' + songs.length + ' 曲'
     : '全 ' + songs.length + ' 曲';
 
@@ -885,22 +1104,10 @@ function render() {
     noResultsEl.style.display = 'block';
     return;
   }
-
   noResultsEl.style.display = 'none';
 
-  const displayQuery = currentArtist ? '' : query;
-
-  const html = filtered.map(s => {
-    return '<div class="song-card">' +
-      '<div class="song-num">' + s[0] + '</div>' +
-      '<div class="song-info">' +
-        '<div class="song-title">' + highlight(s[1], displayQuery) + '</div>' +
-        '<div class="song-artist">' + highlight(s[2], displayQuery) + '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  songListEl.innerHTML = html;
+  const displayQuery = currentArtistFilter ? '' : query;
+  songListEl.innerHTML = filtered.map(s => songCardHtml(s, displayQuery)).join('');
 }
 
 function setSort(sort) {
@@ -908,22 +1115,88 @@ function setSort(sort) {
   document.querySelectorAll('.sort-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.sort === sort);
   });
-  render();
+  renderSearch();
 }
 
 searchInput.addEventListener('input', () => {
   if (searchInput.value.trim()) {
-    currentArtist = '';
+    currentArtistFilter = '';
     document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
   }
-  render();
+  renderSearch();
 });
 
+// ===== Tab 2: All songs =====
+function renderAllSongs() {
+  const sorted = songs.slice().sort((a, b) => a[0] - b[0]);
+  document.getElementById('allSongList').innerHTML = sorted.map(s => songCardHtml(s)).join('');
+}
+
+// ===== Tab 3: Artist index =====
+function buildArtistData() {
+  const map = {};
+  songs.forEach(s => {
+    if (!map[s[2]]) map[s[2]] = [];
+    map[s[2]].push(s);
+  });
+  const artists = Object.keys(map).sort((a, b) => a.localeCompare(b, 'ja'));
+  return { map, artists };
+}
+
+function showArtistList() {
+  const { map, artists } = buildArtistData();
+  document.getElementById('artistListView').style.display = 'block';
+  document.getElementById('artistDetailView').style.display = 'none';
+  document.getElementById('artistCountLabel').textContent = '全 ' + artists.length + ' アーティスト';
+
+  // Group by first character type
+  let html = '';
+  let lastGroup = '';
+
+  artists.forEach(name => {
+    const first = name.charAt(0);
+    let group;
+    if (/[A-Za-z]/.test(first)) group = 'A-Z';
+    else if (/[ぁ-ん]/.test(first)) group = 'あ行〜';
+    else if (/[ァ-ヶ]/.test(first)) group = 'ア行〜';
+    else if (/[一-龥]/.test(first)) group = '漢字';
+    else group = 'その他';
+
+    if (group !== lastGroup) {
+      html += '<div class="artist-group-header">' + escapeHtml(group) + '</div>';
+      lastGroup = group;
+    }
+
+    html += '<div class="artist-row" onclick="showArtistDetail(\'' + escapeHtml(name).replace(/'/g, "\\'") + '\')">' +
+      '<span class="artist-name">' + escapeHtml(name) + '</span>' +
+      '<span class="artist-count">' + map[name].length + ' 曲 ▶</span>' +
+    '</div>';
+  });
+
+  document.getElementById('artistIndex').innerHTML = html;
+}
+
+function showArtistDetail(name) {
+  const { map } = buildArtistData();
+  const artistSongs = map[name] || [];
+
+  document.getElementById('artistListView').style.display = 'none';
+  document.getElementById('artistDetailView').style.display = 'block';
+  document.getElementById('detailArtistName').textContent = name;
+  document.getElementById('detailArtistCount').textContent = artistSongs.length + ' 曲';
+  document.getElementById('detailSongList').innerHTML = artistSongs.map(s => songCardHtml(s)).join('');
+
+  window.scrollTo({top: 0});
+}
+
+// ===== Scroll to top button =====
+const scrollTopBtn = document.getElementById('scrollTop');
 window.addEventListener('scroll', () => {
   scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
 });
 
-render();
+// ===== Init =====
+renderSearch();
 </script>
 </body>
 </html>
