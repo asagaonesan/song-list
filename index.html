@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>あさがおねえさん 歌える曲リスト</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  background: #fdf6f0;
+  color: #333;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.header {
+  background: linear-gradient(135deg, #f8a4c8, #a8d8ea);
+  padding: 20px 16px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  margin-bottom: 12px;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.search-box input::placeholder {
+  color: #aaa;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #bbb;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px 6px;
+  font-size: 13px;
+  color: #999;
+}
+
+.sort-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #888;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sort-btn.active {
+  border-color: #f8a4c8;
+  color: #f8a4c8;
+  background: #fff5f9;
+}
+
+.song-list {
+  padding: 0 12px 24px;
+}
+
+.song-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.1s;
+}
+
+.song-card:active {
+  transform: scale(0.98);
+}
+
+.song-num {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8a4c8, #c8a4f8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.song-artist {
+  font-size: 13px;
+  color: #999;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.song-title mark, .song-artist mark {
+  background: #fff3a8;
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #bbb;
+  font-size: 15px;
+}
+
+.no-results .emoji {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.scroll-top {
+  position: fixed;
+  bottom: 24px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8a4c8, #a8d8ea);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 99;
+}
+
+.scroll-top.visible {
+  display: flex;
+}
+
+.artist-filter {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.artist-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.artist-chip {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.artist-chip.active {
+  border-color: #f8a4c8;
+  background: #fff5f9;
+  color: #e87aaa;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>あさがおねえさん 歌える曲リスト</h1>
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="曲名・アーティスト名で検索..." autocomplete="off">
+  </div>
+</div>
+
+<div class="artist-filter" id="artistFilter"></div>
+
+<div class="stats">
+  <span id="countLabel">全 553 曲</span>
+  <div style="display:flex;gap:6px;">
+    <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
+    <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
+    <button class="sort-btn" data-sort="artist" onclick="setSort('artist')">歌手順</button>
+  </div>
+</div>
+
+<div class="song-list" id="songList"></div>
+
+<div class="no-results" id="noResults" style="display:none;">
+  <div class="emoji">&#128270;</div>
+  <div>一致する曲が見つかりませんでした</div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
+
+<script>
+const songs = [
+  [1,"Dancing Queen","ABBA"],
+  [2,"Chiquitita","ABBA"],
+  [3,"Mamma Mia","ABBA"],
+  [4,"SOS","ABBA"],
+  [5,"Thank you for the music","ABBA"],
+  [6,"I Have a Dream","ABBA"],
+  [7,"365日の紙飛行機","AKB48"],
+  [8,"ヘビーローテーション","AKB48"],
+  [9,"恋するフォーチュンクッキー","AKB48"],
+  [10,"フライングゲット","AKB48"],
+  [11,"初日","AKB48"],
+  [12,"大声ダイヤモンド","AKB48"],
+  [13,"会いたかった","AKB48"],
+  [14,"創聖のアクエリオン","AKINO"],
+  [15,"夢はひそかに","alan"],
+  [16,"RED CLIFF～心・戦～","alan"],
+  [17,"久遠の河","alan"],
+  [18,"Speak softly love～ゴッドファーザー愛のテーマ～","Andy Williams"],
+  [19,"Moon river","Andy Williams"],
+  [20,"Charade","Andy Williams"],
+  [21,"The way we were（追憶）","Barbra Streisand"],
+  [22,"Alfie","Barbra Streisand"],
+  [23,"Woman in love","Barbra Streisand"],
+  [24,"Heaven is a place on earth","Belinda Carlisle"],
+  [25,"Piano man","Billy Joel"],
+  [26,"We're all alone","Boz Scaggs"],
+  [27,"Tomorrow","Annie"],
+  [28,"おどるポンポコリン","B.B.クイーンズ"],
+  [29,"The Rose","Bette Midler"],
+  [30,"島人ぬ宝","BEGIN"],
+  [31,"メリクリ","BoA"],
+  [32,"You've Got A Friend","Carole King"],
+  [33,"I Need To Be In Love","Carpenters"],
+  [34,"Top of the world","Carpenters"],
+  [35,"close to you","Carpenters"],
+  [36,"yesterday once more","Carpenters"],
+  [37,"Rainy Days And Mondays","Carpenters"],
+  [38,"Sing","Carpenters"],
+  [39,"My heart will go on","Celine Dion"],
+  [40,"To Love You More","Celine Dion"],
+  [41,"You raise me up","Celtic Woman"],
+  [42,"YAH YAH YAH","CHAGE and ASKA"],
+  [43,"I've never been to me (愛はかげろうのように)","charlene"],
+  [44,"ムーンライト伝説","DALI"],
+  [45,"Lost In Your Eyes","Debbie Gibson"],
+  [46,"Tammy","Debbie Reynolds"],
+  [47,"If we hold on together","Diana Ross"],
+  [48,"God help the outcasts","Disney"],
+  [49,"トライ・エヴリシング","Dream Ami"],
+  [50,"何度でも","DREAMS COME TRUE"],
+  [51,"未来予想図II","DREAMS COME TRUE"],
+  [52,"LOVE LOVE LOVE","DREAMS COME TRUE"],
+  [53,"U.S.A","DA PUMP"],
+  [54,"Desperado","Eagles"],
+  [55,"Your Song （僕の歌は君の歌）","Elton John"],
+  [56,"Blue Hawaii","Elvis Presley"],
+  [57,"Can't Help Falling in Love","Elvis Presley"],
+  [58,"The Last Waltz","Engelbert Humperdinck"],
+  [59,"Only Time","Enya"],
+  [60,"Time goes by","Every Little Thing"],
+  [61,"fragile","Every Little Thing"],
+  [62,"出逢った頃のように","Every Little Thing"],
+  [63,"Choo Choo TRAIN","EXILE"],
+  [64,"パプリカ","Foorin"],
+  [65,"My Way","Frank Sinatra"],
+  [66,"New York New York","Frank Sinatra"],
+  [67,"DEPARTURES","globe"],
+  [68,"366日","HY"],
+  [69,"明日への扉","I WiSH"],
+  [70,"Imagine","John Lennon"],
+  [71,"Open Arms","Journey"],
+  [72,"Somewhere over the rainbow","Judy Garland"],
+  [73,"When You Wish Upon A Star","JUJU"],
+  [74,"やさしさで溢れるように","JUJU"],
+  [75,"Remember","JUJU"],
+  [76,"Fly me to the moon","JUJU"],
+  [77,"It's a Jazz Thing！","JUJU"],
+  [78,"Lullaby of Birdland","JUJU"],
+  [79,"Can't take my eyes off you","JUJU"],
+  [80,"summertime","JUJU"],
+  [81,"奇跡を望むなら…","JUJU"],
+  [82,"二人でお酒を","JUJU"],
+  [83,"スーパーカリフラジリスティックエクスピアリドーシャス","Julie Andrews"],
+  [84,"My favorite things","Julie Andrews"],
+  [85,"I could have danced all night","Julie Andrews"],
+  [86,"ARIA","Kalafina"],
+  [87,"Lacrimosa","Kalafina"],
+  [88,"輝く夜の静寂には","Kalafina"],
+  [89,"光の旋律","Kalafina"],
+  [90,"storia","Kalafina"],
+  [91,"Red Moon","Kalafina"],
+  [92,"君の銀の庭","Kalafina"],
+  [93,"愛は勝つ","KAN"],
+  [94,"Best Friend","Kiroro"],
+  [95,"未来へ","Kiroro"],
+  [96,"冬のうた","Kiroro"],
+  [97,"長い間","Kiroro"],
+  [98,"ひとつぶの涙","Kiroro"],
+  [99,"愛さない","Kiroro"],
+  [100,"青のじゅもん","Kiroro"],
+  [101,"最後のKiss","Kiroro"],
+  [102,"ありがとう…","KOKIA"],
+  [103,"歌う人","KOKIA"],
+  [104,"Pieces","L'Arc~en~Ciel"],
+  [105,"炎","Lisa"],
+  [106,"ひだまりの詩","Le Couple"],
+  [107,"What a wonderful world（この素晴らしき世界）","Louis Armstrong"],
+  [108,"夢をかなえてドラえもん","mao"],
+  [109,"without you","Mariah Carey"],
+  [110,"SAYONARA","Mary Macgregor"],
+  [111,"Ride on time","MAX"],
+  [112,"生きてこそ","May J."],
+  [113,"ライオン","May'n/中島愛"],
+  [114,"逢いたくていま","MISIA"],
+  [115,"アイノカタチ","MISIA"],
+  [116,"Everything","MISIA"],
+  [117,"飛び方を忘れた小さな鳥","MISIA"],
+  [118,"名前のない空を見上げて","MISIA"],
+  [119,"銀河","MISIA"],
+  [120,"少しずつ大切に","MISIA"],
+  [121,"果てなく続くストーリー","MISIA"],
+  [122,"オルフェンズの涙","MISIA"],
+  [123,"歌を歌おう","MISIA"],
+  [124,"Hello Again～昔からある場所～","My Little Lover"],
+  [125,"ファンサ","mona"],
+  [126,"Smile","Nat King Cole"],
+  [127,"Love is a many splendored thing","Nat King Cole"],
+  [128,"人魚","NOKKO"],
+  [129,"フレンズ(Match up version)","NOKKO"],
+  [130,"I'm in the mood for dancing","The Nolans"],
+  [131,"Don't know why","Norah Jones"],
+  [132,"Take Me Home Country Roads","Olivia Newton-John"],
+  [133,"Tennessee Waltz","Patti Page"],
+  [134,"I will follow him","Peggy March"],
+  [135,"チョコレイト・ディスコ","Perfume"],
+  [136,"M","PRINCESS PRINCESS"],
+  [137,"Diamonds","PRINCESS PRINCESS"],
+  [138,"世界でいちばん熱い夏","PRINCESS PRINCESS"],
+  [139,"A Whiter Shade of Pale","Procol Harum"],
+  [140,"かたちあるもの","RUI"],
+  [141,"Memory","Sarah Brightman"],
+  [142,"Nella Fantasia","Sarah Brightman"],
+  [143,"time to say goodbye","Sarah Brightman"],
+  [144,"When she loved me","Sarah McLachlan"],
+  [145,"君は僕に似ている","See-Saw"],
+  [146,"Scarborough Fair","Simon & Garfunkel"],
+  [147,"Bridge over Troubled Water","Simon & Garfunkel"],
+  [148,"世界にひとつだけの花","SMAP"],
+  [149,"夜空ノムコウ","SMAP"],
+  [150,"Butterfly","Smile dk"],
+  [151,"White Love","SPEED"],
+  [152,"Fields of Gold","Sting"],
+  [153,"君の知らない物語","supercell"],
+  [154,"愛を込めて花束を","Superfly"],
+  [155,"愛に抱かれて","Superfly"],
+  [156,"輝く月のように","Superfly"],
+  [157,"Let It Be","The Beatles"],
+  [158,"風になりたい","THE BOOM"],
+  [159,"島唄","THE BOOM"],
+  [160,"ドリフの早口言葉","the ドリフターズ"],
+  [161,"WAになって踊ろう","V6"],
+  [162,"夏祭り","Whiteberry"],
+  [163,"I Will Always Love You","Whitney Houston"],
+  [164,"All at once","Whitney Houston"],
+  [165,"The Greatest Love of All","Whitney Houston"],
+  [166,"紅","XJAPAN"],
+  [167,"心を開いて","ZARD"],
+  [168,"負けないで","ZARD"],
+  [169,"DAN DAN 心魅かれてく","ZARD"],
+  [170,"揺れる想い","ZARD"],
+  [171,"マイフレンド","ZARD"],
+  [172,"Secret base 君がくれたもの","ZONE"],
+  [173,"マリーゴールド","あいみょん"],
+  [174,"裸の心","あいみょん"],
+  [175,"Danny Boy","アイルランド民謡"],
+  [176,"ラピスラズリ","藍井エイル"],
+  [177,"太陽がくれた季節","青い三角定規"],
+  [178,"翼をください","赤い鳥"],
+  [179,"千の風になって","秋川雅史"],
+  [180,"わたしの彼は左きき","麻丘めぐみ"],
+  [181,"花","中孝介"],
+  [182,"みずいろの手紙","あべ静江"],
+  [183,"まつわ","あみん"],
+  [184,"CAN YOU CELEBRATE?","安室奈美恵"],
+  [185,"にじいろ","絢香"],
+  [186,"三日月","絢香"],
+  [187,"おかえり","絢香"],
+  [188,"みんな空の下","絢香"],
+  [189,"WINDING ROAD","絢香×コブクロ"],
+  [190,"グッド・バイ・マイ・ラブ","アン・ルイス"],
+  [191,"六本木心中","アン・ルイス"],
+  [192,"手紙～拝啓十五の君へ～","アンジェラ・アキ"],
+  [193,"サクラ色","アンジェラ・アキ"],
+  [194,"孤独のカケラ","アンジェラ・アキ"],
+  [195,"Amazing Grace","アンジェラ・アキ"],
+  [196,"This Love","アンジェラ・アキ"],
+  [197,"オリビアを聴きながら","杏里"],
+  [198,"愛 おぼえていますか","飯島真理"],
+  [199,"YELL","いきものがかり"],
+  [200,"ありがとう","いきものがかり"],
+  [201,"茜色の約束","いきものがかり"],
+  [202,"じょいふる","いきものがかり"],
+  [203,"天城越え","石川さゆり"],
+  [204,"まちぶせ","石川ひとみ"],
+  [205,"プリンプリン物語","石川ひとみ"],
+  [206,"ふたりの愛ランド","石川優子＆チャゲ"],
+  [207,"ブルーライトヨコハマ","いしだあゆみ"],
+  [208,"チムチムチェリー","一城みゆ希"],
+  [209,"恋人よ","五輪真弓"],
+  [210,"リフレクション","伊東恵里"],
+  [211,"Precious","伊藤由奈"],
+  [212,"ENDLESS STORY","伊藤由奈"],
+  [213,"さんぽ","井上あずみ"],
+  [214,"となりのトトロ","井上あずみ"],
+  [215,"君をのせて","井上あずみ"],
+  [216,"少年時代","井上陽水"],
+  [217,"すずめがサンバ","今井ゆうぞう・はいだしょうこ"],
+  [218,"ぼよよん行進曲","今井ゆうぞう・はいだしょうこ"],
+  [219,"タンポポ団にはいろう！","今井ゆうぞう・はいだしょうこ"],
+  [220,"PIECE OF MY WISH","今井美樹"],
+  [221,"PRIDE","今井美樹"],
+  [222,"Goodbye Yesterday","今井美樹"],
+  [223,"なごり雪","イルカ"],
+  [224,"海岸通","イルカ"],
+  [225,"思秋期","岩崎宏美"],
+  [226,"いのちの理由","岩崎宏美"],
+  [227,"聖母たちのララバイ","岩崎宏美"],
+  [228,"ロマンス","岩崎宏美"],
+  [229,"タッチ","岩崎良美"],
+  [230,"青春","岩崎良美"],
+  [231,"First Love","宇多田ヒカル"],
+  [232,"Can you keep a secret?","宇多田ヒカル"],
+  [233,"サザエさん一家","宇野ゆう子"],
+  [234,"想い出がいっぱい","H2O"],
+  [235,"ブンバ・ボーン","NHKおかあさんといっしょ"],
+  [236,"ラヴ・イズ・オーヴァー","欧陽菲菲"],
+  [237,"熱くなれ","大黒摩季"],
+  [238,"ら・ら・ら","大黒摩季"],
+  [239,"エースをねらえ！","大杉久美子"],
+  [240,"アタックNo.1","大杉久美子"],
+  [241,"たしかなこと","小田和正"],
+  [242,"君住む街へ","小田和正"],
+  [243,"木綿のハンカチーフ","太田裕美"],
+  [244,"さらばシベリア鉄道","太田裕美"],
+  [245,"さくらんぼ","大塚愛"],
+  [246,"シルエット・ロマンス","大橋純子"],
+  [247,"たそがれマイラブ","大橋純子"],
+  [248,"崖の上のポニョ","大橋のぞみ"],
+  [249,"くちびるNetwork","岡田有希子"],
+  [250,"夢をあきらめないで","岡村孝子"],
+  [251,"TOMORROW","岡本真夜"],
+  [252,"ダンシング・ヒーロー","荻野目洋子"],
+  [253,"月の繭","奥井亜紀"],
+  [254,"変わらないもの","奥華子"],
+  [255,"ガーネット","奥華子"],
+  [256,"さらば青春","小椋佳"],
+  [257,"I LOVE YOU","尾崎豊"],
+  [258,"OH MY LITTLE GIRL","尾崎豊"],
+  [259,"月光","鬼束ちひろ"],
+  [260,"流星群","鬼束ちひろ"],
+  [261,"いい日旅立ち・西へ","鬼束ちひろ"],
+  [262,"We can go","鬼束ちひろ"],
+  [263,"眩暈","鬼束ちひろ"],
+  [264,"甲賀忍法帖","陰陽座"],
+  [265,"春なのに","柏原芳恵"],
+  [266,"心の瞳","合唱曲"],
+  [267,"旅立ちの日に","合唱曲"],
+  [268,"夢の世界を","合唱曲"],
+  [269,"時には昔の話を","加藤登紀子"],
+  [270,"マル・マル・モリ・モリ","薫と友樹、たまにムック。"],
+  [271,"J","門倉有希"],
+  [272,"鉄腕アトム","上高田少年合唱団"],
+  [273,"雪だるまつくろう","神田沙也加"],
+  [274,"生まれてはじめて","神田沙也加"],
+  [275,"オーシャンゼリゼ","岸洋子"],
+  [276,"いのちの名前","木村弓"],
+  [277,"いつも何度でも","木村弓"],
+  [278,"Crazy Party Night ~パンプキンの逆襲","きゃりーぱみゅぱみゅ"],
+  [279,"にんじゃりばんばん","きゃりーぱみゅぱみゅ"],
+  [280,"年下の男の子","キャンディーズ"],
+  [281,"暑中お見舞い申し上げます","キャンディーズ"],
+  [282,"ハートのエースが出てこない","キャンディーズ"],
+  [283,"微笑がえし","キャンディーズ"],
+  [284,"やさしい悪魔","キャンディーズ"],
+  [285,"海の声","桐谷健太"],
+  [286,"異邦人","久保田早紀"],
+  [287,"LA・LA・LA・LOVE SONG","久保田利伸"],
+  [288,"Cry on your smile","久保田利伸"],
+  [289,"白い恋人達","桑田佳祐"],
+  [290,"A Whole New World","劇団四季"],
+  [291,"Part of Your World","劇団四季"],
+  [292,"Under the Sea","劇団四季"],
+  [293,"シャドウランド","劇団四季"],
+  [294,"メモリー","劇団四季"],
+  [295,"愛した日々に悔いはない","劇団四季"],
+  [296,"美女と野獣","劇団四季"],
+  [297,"七色シンフォニー","コアラモード."],
+  [298,"桜","コブクロ"],
+  [299,"蕾","コブクロ"],
+  [300,"学園天国","小泉今日子"],
+  [301,"あなたに会えてよかった","小泉今日子"],
+  [302,"木枯らしに抱かれて","小泉今日子"],
+  [303,"キューティーハニー","倖田來未"],
+  [304,"め組のひと","倖田來未"],
+  [305,"バレンタイン・キッス","国生さゆり"],
+  [306,"ある愛の詩","越路吹雪"],
+  [307,"雨音はショパンの調べ","小林麻美"],
+  [308,"恋におちて","小林明子"],
+  [309,"自由への扉","小此木麻里"],
+  [310,"輝く未来","小此木麻里・畠中洋"],
+  [311,"あなた","小坂明子"],
+  [312,"君がいるだけで","米米CLUB"],
+  [313,"浪漫飛行","米米CLUB"],
+  [314,"Y.M.C.A","西城秀樹"],
+  [315,"卒業","斉藤由貴"],
+  [316,"歩いて帰ろう","斉藤和義"],
+  [317,"碧いうさぎ","酒井法子"],
+  [318,"Mr.サマータイム","サーカス"],
+  [319,"夏のお嬢さん","榊原郁恵"],
+  [320,"にじのむこうに","坂田おさむ・坂田めぐみ"],
+  [321,"どんな色がすき","坂田おさむ・坂田めぐみ"],
+  [322,"見上げてごらん夜の星を","坂本九"],
+  [323,"心の瞳","坂本九"],
+  [324,"上を向いて歩こう","坂本九"],
+  [325,"また君に恋してる","坂本冬美"],
+  [326,"宇宙戦艦ヤマト","ささきいさお"],
+  [327,"真夏の果実","サザンオールスターズ"],
+  [328,"TSUNAMI","サザンオールスターズ"],
+  [329,"波乗りジョニー","サザンオールスターズ"],
+  [330,"道化師のソネット","さだまさし"],
+  [331,"北の国から　遥かなる大地より～蛍のテーマ","さだまさし"],
+  [332,"青葉城恋唄","さとう宗幸"],
+  [333,"恋のバカンス","ザ・ピーナッツ"],
+  [334,"会いたい","沢田知可子"],
+  [335,"涙のアリア","サラ・オレイン"],
+  [336,"月のしずく","柴崎コウ"],
+  [337,"おさかな天国","柴矢裕美"],
+  [338,"亜麻色の髪の乙女","島谷ひとみ"],
+  [339,"YUME日和","島谷ひとみ"],
+  [340,"風の谷のナウシカ","島本須美"],
+  [341,"秋の一日","下成佐登子"],
+  [342,"およげ!たいやきくん","子門 真人"],
+  [343,"いつでも誰かが","上々颱風"],
+  [344,"魅せられて","ジュディ・オング"],
+  [345,"仰げば尊し","唱歌・抒情歌"],
+  [346,"一週間","唱歌・抒情歌"],
+  [347,"うみ","唱歌・抒情歌"],
+  [348,"グリーングリーン","唱歌・抒情歌"],
+  [349,"鯉のぼり","唱歌・抒情歌"],
+  [350,"里の秋","唱歌・抒情歌"],
+  [351,"サンタ・ルチア","唱歌・抒情歌"],
+  [352,"せんろはつづくよどこまでも","唱歌・抒情歌"],
+  [353,"月の砂漠","唱歌・抒情歌"],
+  [354,"峠のわが家","唱歌・抒情歌"],
+  [355,"ドナ・ドナ","唱歌・抒情歌"],
+  [356,"夏の思い出","唱歌・抒情歌"],
+  [357,"庭の千草","唱歌・抒情歌"],
+  [358,"埴生の宿","唱歌・抒情歌"],
+  [359,"冬景色","唱歌・抒情歌"],
+  [360,"まっかな秋","唱歌・抒情歌"],
+  [361,"虫のこえ","唱歌・抒情歌"],
+  [362,"雪","唱歌・抒情歌"],
+  [363,"木蘭の涙","スターダストレビュー"],
+  [364,"虹","菅田将暉"],
+  [365,"ひかり","砂川恵理歌"],
+  [366,"チェリー","スピッツ"],
+  [367,"ロビンソン","スピッツ"],
+  [368,"空も飛べるはず","スピッツ"],
+  [369,"ゆめいっぱい","関ゆみこ"],
+  [370,"グランパ","高橋真梨子"],
+  [371,"五番街のマリーへ","高橋真梨子"],
+  [372,"桃色吐息","高橋真梨子"],
+  [373,"残酷な天使のテーゼ","高橋洋子"],
+  [374,"魂のルフラン","高橋洋子"],
+  [375,"いのちの歌","竹内まりや"],
+  [376,"駅","竹内まりや"],
+  [377,"告白","竹内まりや"],
+  [378,"カントリーガール","谷山浩子"],
+  [379,"メロディー","玉置浩二"],
+  [380,"てんとう虫のサンバ","チェリッシュ"],
+  [381,"風になる","つじあやの"],
+  [382,"にじ","つるの 剛士"],
+  [383,"さよならの夏","手嶌葵"],
+  [384,"あさごはんの歌","手嶌葵"],
+  [385,"テルーの唄","手嶌葵"],
+  [386,"明日への手紙","手嶌葵"],
+  [387,"Cheek to cheek","手嶌葵 & 平井堅"],
+  [388,"時の流れに身をまかせ","テレサテン"],
+  [389,"カラーオブザウィンド","土居裕子"],
+  [390,"アイアイ","童謡"],
+  [391,"アイスクリームのうた","童謡"],
+  [392,"赤とんぼ","童謡"],
+  [393,"雨ふり","童謡"],
+  [394,"雨ふりくまの子","童謡"],
+  [395,"あわてんぼうのサンタクロース","童謡"],
+  [396,"いぬのおまわりさん","童謡"],
+  [397,"うれしいひなまつり","童謡"],
+  [398,"大きな栗の木の下で","童謡"],
+  [399,"お正月","童謡"],
+  [400,"鬼のパンツ","童謡"],
+  [401,"ぶんぶんぶん","童謡"],
+  [402,"おばけなんてないさ","童謡"],
+  [403,"おもちゃのチャチャチャ","童謡"],
+  [404,"かえるのがっしょう","童謡"],
+  [405,"かたつむり","童謡"],
+  [406,"鯉のぼり","童謡"],
+  [407,"この道","童謡"],
+  [408,"こぶたぬきつねこ","童謡"],
+  [409,"しっぽのきもち","童謡"],
+  [410,"しゃぼん玉","童謡"],
+  [411,"ぞうさん","童謡"],
+  [412,"たき火","童謡"],
+  [413,"たなばたさま","童謡"],
+  [414,"チューリップ","童謡"],
+  [415,"ちょうちょう","童謡"],
+  [416,"手のひらを太陽に","童謡"],
+  [417,"トマト","童謡"],
+  [418,"どんぐりころころ","童謡"],
+  [419,"ななつのこ","童謡"],
+  [420,"ねこふんじゃった","童謡"],
+  [421,"はるよこい","童謡"],
+  [422,"ビビディバビディブー","童謡"],
+  [423,"故郷","童謡"],
+  [424,"みかんの花咲く丘","童謡"],
+  [425,"ゆりかごのうた","童謡"],
+  [426,"レイニーブルー","徳永英明"],
+  [427,"壊れかけのRadio","徳永英明"],
+  [428,"空よ","トワ・エ・モア"],
+  [429,"誰もいない海","トワ・エ・モア"],
+  [430,"ガラガラヘビがやってくる","とんねるず"],
+  [431,"花","中孝介・森山直太朗"],
+  [432,"Brand-New Way","永井真理子"],
+  [433,"ZUTTO","永井真理子"],
+  [434,"朧月夜～祈り～","中島美嘉"],
+  [435,"桜色舞うころ","中島美嘉"],
+  [436,"雪の華","中島美嘉"],
+  [437,"ORION","中島美嘉"],
+  [438,"糸","中島みゆき"],
+  [439,"麦の唄","中島みゆき"],
+  [440,"世情","中島みゆき"],
+  [441,"時代","中島みゆき"],
+  [442,"誕生","中島みゆき"],
+  [443,"薔薇は美しく散る","なかにし鈴子"],
+  [444,"Dang Dang 気になる","中村由真"],
+  [445,"DESIRE―情熱―","中森明菜"],
+  [446,"飾りじゃないのよ涙は","中森明菜"],
+  [447,"世界中の誰よりきっと","中山美穂＆WANDS"],
+  [448,"涙そうそう","夏川りみ"],
+  [449,"童神","夏川りみ"],
+  [450,"花","夏川りみ"],
+  [451,"にんげんっていいな","中嶋義実・ヤング・フレッシュ"],
+  [452,"いのちの記憶","二階堂和美"],
+  [453,"コーヒールンバ","西田佐知子"],
+  [454,"ひまわりの約束","秦基博"],
+  [455,"世界の約束","倍賞千恵子"],
+  [456,"Boys&Girls","浜崎あゆみ"],
+  [457,"SEASONS","浜崎あゆみ"],
+  [458,"M","浜崎あゆみ"],
+  [459,"ハム太郎とっとこうた","ハムちゃんず"],
+  [460,"花は咲く","花は咲くプロジェクト"],
+  [461,"時をかける少女","原田知世"],
+  [462,"あつまれ！笑顔","速水けんたろう"],
+  [463,"勇気100%","光GENJI"],
+  [464,"天使の休息","久松史奈"],
+  [465,"ハナミズキ","一青窈"],
+  [466,"もらい泣き","一青窈"],
+  [467,"瞳をとじて","平井堅"],
+  [468,"大きな古時計","平井堅"],
+  [469,"ジュピター","平原綾香"],
+  [470,"ふたたび","平原綾香"],
+  [471,"おひさま～大切なあなたへ～","平原綾香"],
+  [472,"ありがとう","平原綾香"],
+  [473,"ロマンスの神様","広瀬香美"],
+  [474,"UFO","ピンクレディー"],
+  [475,"SOS","ピンクレディー"],
+  [476,"サウスポー","ピンクレディー"],
+  [477,"渚のシンドバット","ピンクレディー"],
+  [478,"かけめぐる青春","ビューティー・ペア"],
+  [479,"君は薔薇より美しい","布施明"],
+  [480,"ケ・セラ・セラ","ペギー葉山"],
+  [481,"白い色は恋人の色","ベッツィ&クリス"],
+  [482,"炎のたからもの","ボビー"],
+  [483,"つばさ","本田美奈子"],
+  [484,"いのちをあげよう","本田美奈子"],
+  [485,"アメイジング・グレイス","本田美奈子"],
+  [486,"カントリーロード","本名陽子"],
+  [487,"どんなときも。","槇原敬之"],
+  [488,"マツケンサンバ２","松平健"],
+  [489,"Let It Go","松たか子"],
+  [490,"夏の扉","松田聖子"],
+  [491,"制服","松田聖子"],
+  [492,"瑠璃色の地球","松田聖子"],
+  [493,"赤いスイートピー","松田聖子"],
+  [494,"青い珊瑚礁","松田聖子"],
+  [495,"マイアミ午前五時","松田聖子"],
+  [496,"あなたに逢いたくて","松田聖子"],
+  [497,"風立ちぬ","松田聖子"],
+  [498,"Canary","松田聖子"],
+  [499,"チェリーブラッサム","松田聖子"],
+  [500,"白いパラソル","松田聖子"],
+  [501,"SWEET MEMORIES","松田聖子"],
+  [502,"渚のバルコニー","松田聖子"],
+  [503,"ラムのラブソング","松谷裕子"],
+  [504,"卒業写真","松任谷由実"],
+  [505,"ルージュの伝言","松任谷由実"],
+  [506,"春よ、来い","松任谷由実"],
+  [507,"ひこうき雲","松任谷由実"],
+  [508,"やさしさに包まれたなら","松任谷由実"],
+  [509,"守ってあげたい","松任谷由実"],
+  [510,"恋人がサンタクロース","松任谷由実"],
+  [511,"おジャ魔女カーニバル","MAHO堂"],
+  [512,"ひょっこりひょうたん島","前川陽子"],
+  [513,"天使の誘惑","黛ジュン"],
+  [514,"マジンガーZ","水木一郎"],
+  [515,"一本の鉛筆","美空ひばり"],
+  [516,"川の流れのように","美空ひばり"],
+  [517,"もののけ姫","米良美一"],
+  [518,"LOVEマシーン","モーニング娘。"],
+  [519,"ETERNAL WIND～ほほえみは光る風の中～","森口博子"],
+  [520,"水の星へ愛をこめて","森口博子"],
+  [521,"雨","森高千里"],
+  [522,"渡良瀬橋","森高千里"],
+  [523,"17才","森高千里"],
+  [524,"さくら","森山直太朗"],
+  [525,"夏の終わり","森山直太朗"],
+  [526,"SAKURA～ハルヲウタワネバダ～","矢島美容室"],
+  [527,"ニホンノミカタ-ネバダカラキマシタ-","矢島美容室"],
+  [528,"どこまでも～How Far I'll Go～","屋比久知奈"],
+  [529,"だんご３兄弟","横山だいすけ"],
+  [530,"ありがとうの花","横山だいすけ"],
+  [531,"星間飛行","ランカ・リー＝中島愛"],
+  [532,"愛・おぼえていますか","ランカ・リー＝中島愛"],
+  [533,"蒼のエーテル","ランカ・リー＝中島愛"],
+  [534,"アナタノオト","ランカ・リー＝中島愛"],
+  [535,"フレンズ","レベッカ"],
+  [536,"Mr.ブルー～私の地球～","八神純子"],
+  [537,"Woman \"Wの悲劇\"より","薬師丸ひろ子"],
+  [538,"メイン・テーマ","薬師丸ひろ子"],
+  [539,"セーラー服と機関銃","薬師丸ひろ子"],
+  [540,"秋桜","山口百恵"],
+  [541,"いい日旅立ち","山口百恵"],
+  [542,"プレイバックpart2","山口百恵"],
+  [543,"さよならの向う側","山口百恵"],
+  [544,"乙女座 宮","山口百恵"],
+  [545,"One more time One more chance","山崎まさよし"],
+  [546,"勇気ひとつを友にして","山田美也子"],
+  [547,"だれにだってお誕生日","山野さと子・東京放送児童合唱団"],
+  [548,"俺ら東京さ行くだ","吉幾三"],
+  [549,"迷い道","渡辺真知子"],
+  [550,"ブルー","渡辺真知子"],
+  [551,"かもめが翔んだ日","渡辺真知子"],
+  [552,"My Revolution","渡辺美里"],
+  [553,"サマータイムブルース","渡辺美里"]
+];
+
+// Top artists for filter chips
+const topArtists = ["松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
+
+let currentSort = 'num';
+let currentArtist = '';
+
+const searchInput = document.getElementById('searchInput');
+const songListEl = document.getElementById('songList');
+const noResultsEl = document.getElementById('noResults');
+const countLabel = document.getElementById('countLabel');
+const scrollTopBtn = document.getElementById('scrollTop');
+const artistFilterEl = document.getElementById('artistFilter');
+
+// Build artist filter chips
+topArtists.forEach(artist => {
+  const chip = document.createElement('button');
+  chip.className = 'artist-chip';
+  chip.textContent = artist;
+  chip.onclick = () => {
+    if (currentArtist === artist) {
+      currentArtist = '';
+      chip.classList.remove('active');
+    } else {
+      currentArtist = artist;
+      document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    }
+    searchInput.value = '';
+    render();
+  };
+  artistFilterEl.appendChild(chip);
+});
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlight(text, query) {
+  if (!query) return escapeHtml(text);
+  const escaped = escapeHtml(text);
+  const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return escaped.replace(new RegExp(q, 'gi'), m => '<mark>' + m + '</mark>');
+}
+
+function render() {
+  const query = searchInput.value.trim().toLowerCase();
+  let filtered;
+
+  if (currentArtist) {
+    filtered = songs.filter(s => s[2] === currentArtist);
+  } else if (query) {
+    filtered = songs.filter(s =>
+      s[1].toLowerCase().includes(query) ||
+      s[2].toLowerCase().includes(query)
+    );
+  } else {
+    filtered = songs.slice();
+  }
+
+  // Sort
+  if (currentSort === 'title') {
+    filtered.sort((a, b) => a[1].localeCompare(b[1], 'ja'));
+  } else if (currentSort === 'artist') {
+    filtered.sort((a, b) => a[2].localeCompare(b[2], 'ja') || a[1].localeCompare(b[1], 'ja'));
+  } else {
+    filtered.sort((a, b) => a[0] - b[0]);
+  }
+
+  countLabel.textContent = query || currentArtist
+    ? filtered.length + ' 件ヒット / 全 ' + songs.length + ' 曲'
+    : '全 ' + songs.length + ' 曲';
+
+  if (filtered.length === 0) {
+    songListEl.innerHTML = '';
+    noResultsEl.style.display = 'block';
+    return;
+  }
+
+  noResultsEl.style.display = 'none';
+
+  const displayQuery = currentArtist ? '' : query;
+
+  const html = filtered.map(s => {
+    return '<div class="song-card">' +
+      '<div class="song-num">' + s[0] + '</div>' +
+      '<div class="song-info">' +
+        '<div class="song-title">' + highlight(s[1], displayQuery) + '</div>' +
+        '<div class="song-artist">' + highlight(s[2], displayQuery) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  songListEl.innerHTML = html;
+}
+
+function setSort(sort) {
+  currentSort = sort;
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.sort === sort);
+  });
+  render();
+}
+
+searchInput.addEventListener('input', () => {
+  if (searchInput.value.trim()) {
+    currentArtist = '';
+    document.querySelectorAll('.artist-chip').forEach(c => c.classList.remove('active'));
+  }
+  render();
+});
+
+window.addEventListener('scroll', () => {
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+});
+
+render();
+</script>
+</body>
+</html>
