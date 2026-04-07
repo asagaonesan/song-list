@@ -368,7 +368,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 553 曲</span>
+    <span id="countLabel">全 579 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -385,7 +385,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 553 曲（番号順）</span>
+    <span>全 579 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -982,7 +982,33 @@ const songs = [
   [550,"ブルー","渡辺真知子"],
   [551,"かもめが翔んだ日","渡辺真知子"],
   [552,"My Revolution","渡辺美里"],
-  [553,"サマータイムブルース","渡辺美里"]
+  [553,"サマータイムブルース","渡辺美里"],
+  [554,"夜に駆ける","YOASOBI"],
+  [555,"春泥棒","ヨルシカ"],
+  [556,"LOVE IS ALL","松田聖子"],
+  [557,"怪獣の花唄","Vaundy"],
+  [558,"Just the Way You Are","Billy Joel"],
+  [559,"Honesty","Billy Joel"],
+  [560,"ハルノヒ","あいみょん"],
+  [561,"倍倍FIGHT!","CANDY TUNE"],
+  [562,"小さな旅","岩崎宏美"],
+  [563,"貴方解剖純愛歌 〜死ね〜","あいみょん"],
+  [564,"最初から今まで","Ryu"],
+  [565,"熱いさよなら","五輪真弓"],
+  [566,"レスキューファイアー","JAM Project"],
+  [567,"This Masquerade","Carpenters"],
+  [568,"Superstar","Carpenters"],
+  [569,"How Do I Live","LeAnn Rimes"],
+  [570,"ザ・ラストレイン","Uru"],
+  [571,"クリスマスソング","back number"],
+  [572,"Diary","SEKAI NO OWARI"],
+  [573,"君を忘れない","松山千春"],
+  [574,"春風","くるり"],
+  [575,"My Immortal","Evanescence"],
+  [576,"For Good","Wicked"],
+  [577,"幸せになるために","中山美穂"],
+  [578,"Jump","私立恵比寿中学"],
+  [579,"私だけに","エリザベート"]
 ];
 
 // ===== Utility =====
@@ -1232,7 +1258,14 @@ const artistReading = {
   "八神純子":"やがみじゅんこ","薬師丸ひろ子":"やくしまるひろこ","山口百恵":"やまぐちももえ",
   "山崎まさよし":"やまざきまさよし","山田美也子":"やまだみやこ",
   "山野さと子・東京放送児童合唱団":"やまのさとこ","吉幾三":"よしいくぞう",
-  "渡辺真知子":"わたなべまちこ","渡辺美里":"わたなべみさと"
+  "渡辺真知子":"わたなべまちこ","渡辺美里":"わたなべみさと",
+  "YOASOBI":"YOASOBI","ヨルシカ":"よるしか","Vaundy":"Vaundy",
+  "CANDY TUNE":"CANDY TUNE","Ryu":"Ryu",
+  "JAM Project":"JAM Project","LeAnn Rimes":"LeAnn Rimes","Uru":"Uru",
+  "back number":"back number","SEKAI NO OWARI":"SEKAI NO OWARI",
+  "松山千春":"まつやまちはる","くるり":"くるり","Evanescence":"Evanescence",
+  "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
+  "エリザベート":"えりざべーと"
 };
 
 const gyouOrder = ['あ行','か行','さ行','た行','な行','は行','ま行','や行','ら行','わ行','A-Z'];
