@@ -351,6 +351,109 @@ body {
   color: #999;
   margin-top: 4px;
 }
+
+/* ===== History ===== */
+.history-hint {
+  text-align: center;
+  padding: 50px 20px;
+  color: #bbb;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.song-card .sung-badge {
+  font-size: 11px;
+  color: #e87aaa;
+  background: #fff5f9;
+  border: 1px solid #f8c8dd;
+  border-radius: 12px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.history-date {
+  font-size: 11px;
+  color: #ccc;
+  flex-shrink: 0;
+}
+
+/* ===== History/Ranking toggle ===== */
+.history-toggle {
+  display: flex;
+  margin: 10px 16px 0;
+  background: #f0e8ec;
+  border-radius: 20px;
+  padding: 3px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: #fff;
+  color: #e87aaa;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ===== Ranking ===== */
+.rank-badge {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+.rank-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+.rank-3 { background: linear-gradient(135deg, #CD7F32, #B8690E); }
+.rank-other { background: linear-gradient(135deg, #d4a8c0, #c8a4d8); }
+
+.rank-count {
+  font-size: 12px;
+  color: #e87aaa;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(232,122,170,0.92);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -368,7 +471,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 579 曲</span>
+    <span id="countLabel">全 592 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -385,7 +488,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 579 曲（番号順）</span>
+    <span>全 592 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -410,6 +513,37 @@ body {
   </div>
 </div>
 
+<!-- ===== Tab 4: History & Ranking ===== -->
+<div class="tab-content" id="tabHistory">
+  <div class="history-toggle">
+    <button class="toggle-btn active" id="toggleHistory" onclick="switchHistoryView('history')">りれき</button>
+    <button class="toggle-btn" id="toggleRanking" onclick="switchHistoryView('ranking')">ランキング</button>
+  </div>
+  <!-- History view -->
+  <div id="historyView">
+    <div class="stats">
+      <span id="historyCountLabel">りれき 0 曲</span>
+      <button class="sort-btn" id="clearHistoryBtn" onclick="clearHistory()" style="color:#e87aaa;border-color:#e87aaa;">クリア</button>
+    </div>
+    <div class="history-hint" id="historyHint">
+      <div style="font-size:36px;margin-bottom:10px;">&#128221;</div>
+      <div>他のタブで曲カードをタップすると<br>「歌った曲」として記録されるよ！</div>
+    </div>
+    <div class="song-list" id="historySongList"></div>
+  </div>
+  <!-- Ranking view -->
+  <div id="rankingView" style="display:none;">
+    <div class="stats">
+      <span id="rankingCountLabel">ランキング</span>
+    </div>
+    <div class="history-hint" id="rankingHint">
+      <div style="font-size:36px;margin-bottom:10px;">&#127942;</div>
+      <div>まだ履歴がないよ！<br>曲を歌ったら記録してみてね</div>
+    </div>
+    <div class="song-list" id="rankingSongList"></div>
+  </div>
+</div>
+
 <!-- ===== Bottom Tab Bar ===== -->
 <div class="tab-bar">
   <button class="tab-item active" onclick="switchTab('search')">
@@ -424,9 +558,14 @@ body {
     <span class="tab-icon">&#127908;</span>
     歌手一覧
   </button>
+  <button class="tab-item" onclick="switchTab('history')">
+    <span class="tab-icon">&#128221;</span>
+    りれき
+  </button>
 </div>
 
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
+<div class="toast" id="toast"></div>
 
 <script>
 const songs = [
@@ -999,16 +1138,29 @@ const songs = [
   [567,"This Masquerade","Carpenters"],
   [568,"Superstar","Carpenters"],
   [569,"How Do I Live","LeAnn Rimes"],
-  [570,"ザ・ラストレイン","Uru"],
+  [570,"The last rain","Uru"],
   [571,"クリスマスソング","back number"],
   [572,"Diary","SEKAI NO OWARI"],
   [573,"君を忘れない","松山千春"],
-  [574,"春風","くるり"],
+  [574,"春風","Rihwa"],
   [575,"My Immortal","Evanescence"],
   [576,"For Good","Wicked"],
   [577,"幸せになるために","中山美穂"],
   [578,"Jump","私立恵比寿中学"],
-  [579,"私だけに","エリザベート"]
+  [579,"私だけに","エリザベート"],
+  [580,"Rising Hope","LiSA"],
+  [581,"バンドワゴン","ラストアイドル"],
+  [582,"How Will I Know","Whitney Houston"],
+  [583,"小さな恋のうた","MONGOL800"],
+  [584,"本能","椎名林檎"],
+  [585,"Too Much Love Will Kill You","Queen"],
+  [586,"We Belong","Pat Benatar"],
+  [587,"めぐる季節","井上あずみ"],
+  [588,"24時間の神話","VOICE"],
+  [589,"樹海の糸","Cocco"],
+  [590,"Tears","Crystal Kay"],
+  [591,"Do They Know It's Christmas?","Band Aid"],
+  [592,"愛はとまらない","Starship"]
 ];
 
 // ===== Utility =====
@@ -1023,13 +1175,20 @@ function highlight(text, query) {
   return escaped.replace(new RegExp(q, 'gi'), m => '<mark>' + m + '</mark>');
 }
 
-function songCardHtml(s, query) {
+function songCardHtml(s, query, opts) {
+  opts = opts || {};
+  let extra = '';
+  if (opts.historyDate) {
+    extra = '<span class="history-date">' + opts.historyDate + '</span>';
+  } else {
+    extra = '<span class="sung-badge" onclick="event.stopPropagation();addToHistory(' + s[0] + ')">&#9834; 歌った</span>';
+  }
   return '<div class="song-card">' +
     '<div class="song-num">' + s[0] + '</div>' +
     '<div class="song-info">' +
       '<div class="song-title">' + highlight(s[1], query || '') + '</div>' +
       '<div class="song-artist">' + highlight(s[2], query || '') + '</div>' +
-    '</div></div>';
+    '</div>' + extra + '</div>';
 }
 
 // ===== Tab switching =====
@@ -1037,12 +1196,14 @@ let currentTab = 'search';
 
 function switchTab(tab) {
   currentTab = tab;
+  const tabs = ['search','all','artist','history'];
   document.querySelectorAll('.tab-item').forEach((el, i) => {
-    el.classList.toggle('active', ['search','all','artist'][i] === tab);
+    el.classList.toggle('active', tabs[i] === tab);
   });
-  document.getElementById('tabSearch').classList.toggle('active', tab === 'search');
-  document.getElementById('tabAll').classList.toggle('active', tab === 'all');
-  document.getElementById('tabArtist').classList.toggle('active', tab === 'artist');
+  tabs.forEach(t => {
+    const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (el) el.classList.toggle('active', t === tab);
+  });
 
   // Show/hide search box
   document.getElementById('searchBoxWrap').style.display = tab === 'search' ? 'block' : 'none';
@@ -1050,7 +1211,8 @@ function switchTab(tab) {
   window.scrollTo({top: 0});
 
   if (tab === 'all') renderAllSongs();
-  if (tab === 'artist') { showArtistList(); }
+  if (tab === 'artist') showArtistList();
+  if (tab === 'history') renderHistory();
 }
 
 // ===== Tab 1: Search =====
@@ -1263,7 +1425,11 @@ const artistReading = {
   "CANDY TUNE":"CANDY TUNE","Ryu":"Ryu",
   "JAM Project":"JAM Project","LeAnn Rimes":"LeAnn Rimes","Uru":"Uru",
   "back number":"back number","SEKAI NO OWARI":"SEKAI NO OWARI",
-  "松山千春":"まつやまちはる","くるり":"くるり","Evanescence":"Evanescence",
+  "松山千春":"まつやまちはる","Rihwa":"Rihwa","LiSA":"LiSA","ラストアイドル":"らすとあいどる",
+  "MONGOL800":"MONGOL800","椎名林檎":"しいなりんご","Queen":"Queen",
+  "Pat Benatar":"Pat Benatar","VOICE":"VOICE","Cocco":"Cocco",
+  "Crystal Kay":"Crystal Kay","Band Aid":"Band Aid","Starship":"Starship",
+  "Evanescence":"Evanescence",
   "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
   "エリザベート":"えりざべーと"
 };
@@ -1338,6 +1504,127 @@ function showArtistDetail(name) {
   document.getElementById('detailSongList').innerHTML = artistSongs.map(s => songCardHtml(s)).join('');
 
   window.scrollTo({top: 0});
+}
+
+// ===== Tab 4: History =====
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem('songHistory') || '[]');
+  } catch(e) { return []; }
+}
+
+function saveHistory(hist) {
+  localStorage.setItem('songHistory', JSON.stringify(hist));
+}
+
+function addToHistory(songId) {
+  const song = songs.find(s => s[0] === songId);
+  if (!song) return;
+  const hist = getHistory();
+  const now = new Date();
+  const dateStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  hist.unshift({ id: songId, date: dateStr, ts: now.getTime() });
+  // 最大200件
+  if (hist.length > 200) hist.length = 200;
+  saveHistory(hist);
+  showToast('♪ ' + song[1] + ' を記録したよ！');
+}
+
+function clearHistory() {
+  if (confirm('りれきを全部消していい？')) {
+    localStorage.removeItem('songHistory');
+    renderHistory();
+  }
+}
+
+let currentHistoryView = 'history';
+
+function switchHistoryView(view) {
+  currentHistoryView = view;
+  document.getElementById('toggleHistory').classList.toggle('active', view === 'history');
+  document.getElementById('toggleRanking').classList.toggle('active', view === 'ranking');
+  document.getElementById('historyView').style.display = view === 'history' ? 'block' : 'none';
+  document.getElementById('rankingView').style.display = view === 'ranking' ? 'block' : 'none';
+  if (view === 'history') renderHistory();
+  if (view === 'ranking') renderRanking();
+}
+
+function renderHistory() {
+  const hist = getHistory();
+  const label = document.getElementById('historyCountLabel');
+  const hint = document.getElementById('historyHint');
+  const list = document.getElementById('historySongList');
+
+  label.textContent = 'りれき ' + hist.length + ' 曲';
+
+  if (hist.length === 0) {
+    hint.style.display = 'block';
+    list.innerHTML = '';
+    return;
+  }
+  hint.style.display = 'none';
+
+  const songMap = {};
+  songs.forEach(s => songMap[s[0]] = s);
+
+  list.innerHTML = hist.map(h => {
+    const s = songMap[h.id];
+    if (!s) return '';
+    return songCardHtml(s, '', { historyDate: h.date });
+  }).join('');
+}
+
+function renderRanking() {
+  const hist = getHistory();
+  const hint = document.getElementById('rankingHint');
+  const list = document.getElementById('rankingSongList');
+  const label = document.getElementById('rankingCountLabel');
+
+  if (hist.length === 0) {
+    hint.style.display = 'block';
+    list.innerHTML = '';
+    label.textContent = 'ランキング';
+    return;
+  }
+  hint.style.display = 'none';
+
+  // Count occurrences
+  const countMap = {};
+  hist.forEach(h => {
+    countMap[h.id] = (countMap[h.id] || 0) + 1;
+  });
+
+  // Sort by count descending
+  const ranked = Object.keys(countMap)
+    .map(id => ({ id: Number(id), count: countMap[id] }))
+    .sort((a, b) => b.count - a.count);
+
+  const songMap = {};
+  songs.forEach(s => songMap[s[0]] = s);
+
+  label.textContent = 'よく歌う曲 TOP ' + ranked.length;
+
+  list.innerHTML = ranked.map((r, i) => {
+    const s = songMap[r.id];
+    if (!s) return '';
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? 'rank-' + rank : 'rank-other';
+    return '<div class="song-card">' +
+      '<div class="rank-badge ' + rankClass + '">' + rank + '</div>' +
+      '<div class="song-info">' +
+        '<div class="song-title">' + escapeHtml(s[1]) + '</div>' +
+        '<div class="song-artist">' + escapeHtml(s[2]) + '</div>' +
+      '</div>' +
+      '<span class="rank-count">' + r.count + ' 回</span>' +
+    '</div>';
+  }).join('');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
 }
 
 // ===== Scroll to top button =====
