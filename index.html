@@ -352,6 +352,45 @@ body {
   margin-top: 4px;
 }
 
+/* ===== Gyou nav (jump buttons) ===== */
+.gyou-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 12px 4px;
+  background: #fdf6f0;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.gyou-btn {
+  flex: 1 0 auto;
+  min-width: 36px;
+  padding: 7px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #f0d8e4;
+  background: #fff;
+  color: #e87aaa;
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s;
+}
+
+.gyou-btn:active {
+  background: #f8a4c8;
+  color: #fff;
+}
+
+.gyou-btn.disabled {
+  opacity: 0.3;
+  color: #aaa;
+  border-color: #e8e8e8;
+  pointer-events: none;
+}
+
 /* ===== History ===== */
 .history-hint {
   text-align: center;
@@ -471,7 +510,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 592 曲</span>
+    <span id="countLabel">全 612 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -488,7 +527,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 592 曲（番号順）</span>
+    <span>全 612 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -497,6 +536,7 @@ body {
 <div class="tab-content" id="tabArtist">
   <!-- Artist list view -->
   <div id="artistListView">
+    <div class="gyou-nav" id="gyouNav"></div>
     <div class="stats">
       <span id="artistCountLabel"></span>
     </div>
@@ -513,32 +553,27 @@ body {
   </div>
 </div>
 
-<!-- ===== Tab 4: History & Ranking ===== -->
+<!-- ===== Tab 4: Recently sung & Ranking ===== -->
 <div class="tab-content" id="tabHistory">
   <div class="history-toggle">
-    <button class="toggle-btn active" id="toggleHistory" onclick="switchHistoryView('history')">りれき</button>
+    <button class="toggle-btn active" id="togglePublic" onclick="switchHistoryView('public')">最近歌った曲</button>
     <button class="toggle-btn" id="toggleRanking" onclick="switchHistoryView('ranking')">ランキング</button>
   </div>
-  <!-- History view -->
-  <div id="historyView">
+  <!-- Public view -->
+  <div id="publicView">
     <div class="stats">
-      <span id="historyCountLabel">りれき 0 曲</span>
-      <button class="sort-btn" id="clearHistoryBtn" onclick="clearHistory()" style="color:#e87aaa;border-color:#e87aaa;">クリア</button>
+      <span id="publicCountLabel">最近歌った曲</span>
     </div>
-    <div class="history-hint" id="historyHint">
-      <div style="font-size:36px;margin-bottom:10px;">&#128221;</div>
-      <div>他のタブで曲カードをタップすると<br>「歌った曲」として記録されるよ！</div>
-    </div>
-    <div class="song-list" id="historySongList"></div>
+    <div class="song-list" id="publicSongList"></div>
   </div>
   <!-- Ranking view -->
   <div id="rankingView" style="display:none;">
     <div class="stats">
-      <span id="rankingCountLabel">ランキング</span>
+      <span id="rankingCountLabel">よく歌う曲ランキング</span>
     </div>
     <div class="history-hint" id="rankingHint">
       <div style="font-size:36px;margin-bottom:10px;">&#127942;</div>
-      <div>まだ履歴がないよ！<br>曲を歌ったら記録してみてね</div>
+      <div>まだデータがないよ！<br>お楽しみに♪</div>
     </div>
     <div class="song-list" id="rankingSongList"></div>
   </div>
@@ -559,8 +594,8 @@ body {
     歌手一覧
   </button>
   <button class="tab-item" onclick="switchTab('history')">
-    <span class="tab-icon">&#128221;</span>
-    りれき
+    <span class="tab-icon">&#127926;</span>
+    歌った曲
   </button>
 </div>
 
@@ -1160,7 +1195,27 @@ const songs = [
   [589,"樹海の糸","Cocco"],
   [590,"Tears","Crystal Kay"],
   [591,"Do They Know It's Christmas?","Band Aid"],
-  [592,"愛はとまらない","Starship"]
+  [592,"愛はとまらない","Starship"],
+  [593,"ヒカリへ","miwa"],
+  [594,"only my railgun","fripSide"],
+  [595,"あなたへ贈る歌","erica"],
+  [596,"I Need You","LeAnn Rimes"],
+  [597,"to the beginning","Kalafina"],
+  [598,"運命のルーレットまわして","ZARD"],
+  [599,"春一番","キャンディーズ"],
+  [600,"シンデレラ・ハネムーン","岩崎宏美"],
+  [601,"My Dear","Crystal Kay"],
+  [602,"つぐない","テレサテン"],
+  [603,"HERO","中山美穂"],
+  [604,"ただ泣きたくなるの","中山美穂"],
+  [605,"MIDNIGHT TAXI","中山美穂"],
+  [606,"花瓶","中山美穂"],
+  [607,"遠い街のどこかで","中山美穂"],
+  [608,"You're My Only Shinin' Star","中山美穂"],
+  [609,"色・ホワイトブレンド","中山美穂"],
+  [610,"未来へのプレゼント","中山美穂"],
+  [611,"これからのI LOVE YOU","中山美穂"],
+  [612,"恋人たちの神話","テレサテン"]
 ];
 
 // ===== Utility =====
@@ -1180,8 +1235,6 @@ function songCardHtml(s, query, opts) {
   let extra = '';
   if (opts.historyDate) {
     extra = '<span class="history-date">' + opts.historyDate + '</span>';
-  } else {
-    extra = '<span class="sung-badge" onclick="event.stopPropagation();addToHistory(' + s[0] + ')">&#9834; 歌った</span>';
   }
   return '<div class="song-card">' +
     '<div class="song-num">' + s[0] + '</div>' +
@@ -1239,6 +1292,19 @@ allChip.onclick = () => {
   renderSearch();
 };
 artistFilterEl.appendChild(allChip);
+
+// 「最近歌った曲」ボタン（りれきタブへジャンプ）
+const recentChip = document.createElement('button');
+recentChip.className = 'artist-chip';
+recentChip.textContent = '🎶 最近歌った曲';
+recentChip.style.background = '#fff5f9';
+recentChip.style.borderColor = '#f8c8dd';
+recentChip.style.color = '#e87aaa';
+recentChip.onclick = () => {
+  switchTab('history');
+  switchHistoryView('public');
+};
+artistFilterEl.appendChild(recentChip);
 
 topArtists.forEach(artist => {
   const chip = document.createElement('button');
@@ -1429,6 +1495,7 @@ const artistReading = {
   "MONGOL800":"MONGOL800","椎名林檎":"しいなりんご","Queen":"Queen",
   "Pat Benatar":"Pat Benatar","VOICE":"VOICE","Cocco":"Cocco",
   "Crystal Kay":"Crystal Kay","Band Aid":"Band Aid","Starship":"Starship",
+  "miwa":"miwa","fripSide":"fripSide","erica":"erica",
   "Evanescence":"Evanescence",
   "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
   "エリザベート":"えりざべーと"
@@ -1472,6 +1539,24 @@ function showArtistList() {
   document.getElementById('artistDetailView').style.display = 'none';
   document.getElementById('artistCountLabel').textContent = '全 ' + artists.length + ' アーティスト';
 
+  // 存在する行を調べる
+  const existingGroups = new Set();
+  artists.forEach(name => {
+    const reading = artistReading[name] || name;
+    existingGroups.add(getGyou(reading.toLowerCase()));
+  });
+
+  // ジャンプナビを作る
+  const navOrder = ['あ行','か行','さ行','た行','な行','は行','ま行','や行','ら行','わ行','A-Z'];
+  const navLabels = {'あ行':'あ','か行':'か','さ行':'さ','た行':'た','な行':'な','は行':'は','ま行':'ま','や行':'や','ら行':'ら','わ行':'わ','A-Z':'A-Z'};
+  const navEl = document.getElementById('gyouNav');
+  navEl.innerHTML = navOrder.map(g => {
+    const hasIt = existingGroups.has(g);
+    const cls = 'gyou-btn' + (hasIt ? '' : ' disabled');
+    const onclk = hasIt ? ' onclick="jumpToGroup(\'' + g + '\')"' : '';
+    return '<button class="' + cls + '"' + onclk + '>' + navLabels[g] + '</button>';
+  }).join('');
+
   let html = '';
   let lastGroup = '';
 
@@ -1480,7 +1565,8 @@ function showArtistList() {
     const group = getGyou(reading.toLowerCase());
 
     if (group !== lastGroup) {
-      html += '<div class="artist-group-header">' + escapeHtml(group) + '</div>';
+      const anchorId = 'group-' + encodeURIComponent(group);
+      html += '<div class="artist-group-header" id="' + anchorId + '">' + escapeHtml(group) + '</div>';
       lastGroup = group;
     }
 
@@ -1491,6 +1577,17 @@ function showArtistList() {
   });
 
   document.getElementById('artistIndex').innerHTML = html;
+}
+
+function jumpToGroup(group) {
+  const el = document.getElementById('group-' + encodeURIComponent(group));
+  if (!el) return;
+  // gyou-navとheaderのスティッキー高さ分オフセット
+  const rect = el.getBoundingClientRect();
+  const navHeight = document.querySelector('.gyou-nav').offsetHeight;
+  const headerHeight = document.querySelector('.header').offsetHeight;
+  const y = rect.top + window.scrollY - headerHeight - navHeight - 4;
+  window.scrollTo({top: y, behavior: 'smooth'});
 }
 
 function showArtistDetail(name) {
@@ -1506,95 +1603,70 @@ function showArtistDetail(name) {
   window.scrollTo({top: 0});
 }
 
-// ===== Tab 4: History =====
-function getHistory() {
-  try {
-    return JSON.parse(localStorage.getItem('songHistory') || '[]');
-  } catch(e) { return []; }
-}
+// ===== 公開履歴（あさがおねえさんが最近歌った曲。メモから手動で更新） =====
+// 形式: { id: 曲番号, date: "MM/DD" }
+const publicHistory = [
+  // 例: { id: 580, date: "4/22" },
+];
 
-function saveHistory(hist) {
-  localStorage.setItem('songHistory', JSON.stringify(hist));
-}
-
-function addToHistory(songId) {
-  const song = songs.find(s => s[0] === songId);
-  if (!song) return;
-  const hist = getHistory();
-  const now = new Date();
-  const dateStr = (now.getMonth()+1) + '/' + now.getDate() + ' ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
-  hist.unshift({ id: songId, date: dateStr, ts: now.getTime() });
-  // 最大200件
-  if (hist.length > 200) hist.length = 200;
-  saveHistory(hist);
-  showToast('♪ ' + song[1] + ' を記録したよ！');
-}
-
-function clearHistory() {
-  if (confirm('りれきを全部消していい？')) {
-    localStorage.removeItem('songHistory');
-    renderHistory();
-  }
-}
-
-let currentHistoryView = 'history';
+let currentHistoryView = 'public';
 
 function switchHistoryView(view) {
   currentHistoryView = view;
-  document.getElementById('toggleHistory').classList.toggle('active', view === 'history');
+  document.getElementById('togglePublic').classList.toggle('active', view === 'public');
   document.getElementById('toggleRanking').classList.toggle('active', view === 'ranking');
-  document.getElementById('historyView').style.display = view === 'history' ? 'block' : 'none';
+  document.getElementById('publicView').style.display = view === 'public' ? 'block' : 'none';
   document.getElementById('rankingView').style.display = view === 'ranking' ? 'block' : 'none';
-  if (view === 'history') renderHistory();
+  if (view === 'public') renderPublicHistory();
   if (view === 'ranking') renderRanking();
 }
 
-function renderHistory() {
-  const hist = getHistory();
-  const label = document.getElementById('historyCountLabel');
-  const hint = document.getElementById('historyHint');
-  const list = document.getElementById('historySongList');
-
-  label.textContent = 'りれき ' + hist.length + ' 曲';
-
-  if (hist.length === 0) {
-    hint.style.display = 'block';
-    list.innerHTML = '';
-    return;
-  }
-  hint.style.display = 'none';
-
+function renderPublicHistory() {
+  const list = document.getElementById('publicSongList');
+  const label = document.getElementById('publicCountLabel');
   const songMap = {};
   songs.forEach(s => songMap[s[0]] = s);
 
-  list.innerHTML = hist.map(h => {
+  if (publicHistory.length === 0) {
+    label.textContent = '最近歌った曲';
+    list.innerHTML = '<div class="history-hint"><div style="font-size:36px;margin-bottom:10px;">&#127926;</div><div>最近歌った曲を準備中！<br>お楽しみに♪</div></div>';
+    return;
+  }
+
+  label.textContent = '最近歌った曲 ' + publicHistory.length + ' 曲';
+  list.innerHTML = publicHistory.map(h => {
     const s = songMap[h.id];
     if (!s) return '';
-    return songCardHtml(s, '', { historyDate: h.date });
+    return '<div class="song-card">' +
+      '<div class="song-num">' + s[0] + '</div>' +
+      '<div class="song-info">' +
+        '<div class="song-title">' + escapeHtml(s[1]) + '</div>' +
+        '<div class="song-artist">' + escapeHtml(s[2]) + '</div>' +
+      '</div>' +
+      '<span class="history-date">' + escapeHtml(h.date) + '</span>' +
+    '</div>';
   }).join('');
 }
 
 function renderRanking() {
-  const hist = getHistory();
   const hint = document.getElementById('rankingHint');
   const list = document.getElementById('rankingSongList');
   const label = document.getElementById('rankingCountLabel');
 
-  if (hist.length === 0) {
+  if (publicHistory.length === 0) {
     hint.style.display = 'block';
     list.innerHTML = '';
-    label.textContent = 'ランキング';
+    label.textContent = 'よく歌う曲ランキング';
     return;
   }
   hint.style.display = 'none';
 
-  // Count occurrences
+  // Count occurrences from public history
   const countMap = {};
-  hist.forEach(h => {
+  publicHistory.forEach(h => {
     countMap[h.id] = (countMap[h.id] || 0) + 1;
   });
 
-  // Sort by count descending
   const ranked = Object.keys(countMap)
     .map(id => ({ id: Number(id), count: countMap[id] }))
     .sort((a, b) => b.count - a.count);
