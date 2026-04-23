@@ -510,7 +510,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 614 曲</span>
+    <span id="countLabel">全 623 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -527,7 +527,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 614 曲（番号順）</span>
+    <span>全 623 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -1217,7 +1217,16 @@ const songs = [
   [611,"これからのI LOVE YOU","中山美穂"],
   [612,"恋人たちの神話","テレサテン"],
   [613,"君が好きだと叫びたい","BAAD"],
-  [614,"秘密の花園","松田聖子"]
+  [614,"秘密の花園","松田聖子"],
+  [615,"Fountain","天仙"],
+  [616,"Hidden Island","天仙"],
+  [617,"Horizon","天仙"],
+  [618,"Wandervogel","天仙"],
+  [619,"Fountain〜たからものバージョン〜","天仙"],
+  [620,"凪-calm-","天仙"],
+  [621,"Milky Way","天仙"],
+  [622,"Blessed Rain","天仙"],
+  [623,"Phoenix","天仙"]
 ];
 
 // ===== Utility =====
@@ -1271,7 +1280,7 @@ function switchTab(tab) {
 }
 
 // ===== Tab 1: Search =====
-const topArtists = ["松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
+const topArtists = ["天仙","松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
 
 let currentSort = 'num';
 let currentArtistFilter = '';
@@ -1498,6 +1507,7 @@ const artistReading = {
   "Pat Benatar":"Pat Benatar","VOICE":"VOICE","Cocco":"Cocco",
   "Crystal Kay":"Crystal Kay","Band Aid":"Band Aid","Starship":"Starship",
   "miwa":"miwa","fripSide":"fripSide","erica":"erica","BAAD":"BAAD",
+  "天仙":"てんせん",
   "Evanescence":"Evanescence",
   "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
   "エリザベート":"えりざべーと"
