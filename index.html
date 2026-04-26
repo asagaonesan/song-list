@@ -510,7 +510,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 626 曲</span>
+    <span id="countLabel">全 628 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -527,7 +527,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 626 曲（番号順）</span>
+    <span>全 628 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -1229,7 +1229,9 @@ const songs = [
   [623,"Phoenix","天仙"],
   [624,"いつまでも","MISIA"],
   [625,"星の砂","小柳ルミ子"],
-  [626,"セシル","浅香唯"]
+  [626,"セシル","浅香唯"],
+  [627,"日曜日よりの使者","THE HIGH-LOWS"],
+  [628,"心得","Uru"]
 ];
 
 // ===== Utility =====
@@ -1283,7 +1285,7 @@ function switchTab(tab) {
 }
 
 // ===== Tab 1: Search =====
-const topArtists = ["天仙","松田聖子","MISIA","童謡","唱歌・抒情歌","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","ZARD","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
+const topArtists = ["天仙","松田聖子","MISIA","ABBA","Carpenters","Uru","ZARD","松任谷由実","JUJU","Kiroro","劇団四季","Kalafina","AKB48","キャンディーズ","鬼束ちひろ","岩崎宏美","アンジェラ・アキ","いきものがかり","ピンクレディー"];
 
 let currentSort = 'num';
 let currentArtistFilter = '';
@@ -1511,6 +1513,7 @@ const artistReading = {
   "Crystal Kay":"Crystal Kay","Band Aid":"Band Aid","Starship":"Starship",
   "miwa":"miwa","fripSide":"fripSide","erica":"erica","BAAD":"BAAD",
   "天仙":"てんせん","小柳ルミ子":"こやなぎるみこ","浅香唯":"あさかゆい",
+  "THE HIGH-LOWS":"THE HIGH-LOWS",
   "Evanescence":"Evanescence",
   "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
   "エリザベート":"えりざべーと"
@@ -1621,17 +1624,27 @@ function showArtistDetail(name) {
 // ===== 公開履歴（あさがおねえさんが最近歌った曲。メモから手動で更新） =====
 // 形式: { id: 曲番号, date: "MM/DD" }
 const publicHistory = [
-  { id: 119, date: "4/23" },  // 銀河 / MISIA
-  { id: 624, date: "4/23" },  // いつまでも / MISIA
-  { id: 625, date: "4/23" },  // 星の砂 / 小柳ルミ子
-  { id: 626, date: "4/23" },  // セシル / 浅香唯
-  { id: 578, date: "4/23" },  // Jump / 私立恵比寿中学
-  { id: 113, date: "4/23" },  // ライオン / May'n/中島愛
-  { id: 36, date: "4/23" },   // yesterday once more / Carpenters
-  { id: 613, date: "4/23" },  // 君が好きだと叫びたい / BAAD
-  { id: 614, date: "4/23" },  // 秘密の花園 / 松田聖子
-  { id: 41, date: "4/23" },   // You raise me up / Celtic Woman
-  { id: 153, date: "4/23" },  // 君の知らない物語 / supercell
+  // 4/26 配信
+  { id: 458 },  // M / 浜崎あゆみ
+  { id: 11 },   // 初日 / AKB48
+  { id: 145 },  // 君は僕に似ている / See-Saw
+  { id: 627 },  // 日曜日よりの使者 / THE HIGH-LOWS
+  { id: 508 },  // やさしさに包まれたなら / 松任谷由実
+  { id: 628 },  // 心得 / Uru
+  { id: 601 },  // My Dear / Crystal Kay
+  { id: 551 },  // かもめが翔んだ日 / 渡辺真知子
+  // 4/23 配信
+  { id: 119 },  // 銀河 / MISIA
+  { id: 624 },  // いつまでも / MISIA
+  { id: 625 },  // 星の砂 / 小柳ルミ子
+  { id: 626 },  // セシル / 浅香唯
+  { id: 578 },  // Jump / 私立恵比寿中学
+  { id: 113 },  // ライオン / May'n/中島愛
+  { id: 36 },   // yesterday once more / Carpenters
+  { id: 613 },  // 君が好きだと叫びたい / BAAD
+  { id: 614 },  // 秘密の花園 / 松田聖子
+  { id: 41 },   // You raise me up / Celtic Woman
+  { id: 153 },  // 君の知らない物語 / supercell
 ];
 
 let currentHistoryView = 'public';
@@ -1668,7 +1681,6 @@ function renderPublicHistory() {
         '<div class="song-title">' + escapeHtml(s[1]) + '</div>' +
         '<div class="song-artist">' + escapeHtml(s[2]) + '</div>' +
       '</div>' +
-      '<span class="history-date">' + escapeHtml(h.date) + '</span>' +
     '</div>';
   }).join('');
 }
