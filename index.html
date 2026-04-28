@@ -510,7 +510,7 @@ body {
 <div class="tab-content active" id="tabSearch">
   <div class="artist-filter" id="artistFilter"></div>
   <div class="stats">
-    <span id="countLabel">全 628 曲</span>
+    <span id="countLabel">全 630 曲</span>
     <div style="display:flex;gap:6px;">
       <button class="sort-btn active" data-sort="num" onclick="setSort('num')">番号順</button>
       <button class="sort-btn" data-sort="title" onclick="setSort('title')">曲名順</button>
@@ -527,7 +527,7 @@ body {
 <!-- ===== Tab 2: All songs ===== -->
 <div class="tab-content" id="tabAll">
   <div class="stats">
-    <span>全 628 曲（番号順）</span>
+    <span>全 630 曲（番号順）</span>
   </div>
   <div class="song-list" id="allSongList"></div>
 </div>
@@ -1231,7 +1231,9 @@ const songs = [
   [625,"星の砂","小柳ルミ子"],
   [626,"セシル","浅香唯"],
   [627,"日曜日よりの使者","THE HIGH-LOWS"],
-  [628,"心得","Uru"]
+  [628,"心得","Uru"],
+  [629,"星のかけらを探しに行こう Again","福耳"],
+  [630,"スターゲイザー","スピッツ"]
 ];
 
 // ===== Utility =====
@@ -1513,6 +1515,7 @@ const artistReading = {
   "Crystal Kay":"Crystal Kay","Band Aid":"Band Aid","Starship":"Starship",
   "miwa":"miwa","fripSide":"fripSide","erica":"erica","BAAD":"BAAD",
   "天仙":"てんせん","小柳ルミ子":"こやなぎるみこ","浅香唯":"あさかゆい",
+  "福耳":"ふくみみ",
   "THE HIGH-LOWS":"THE HIGH-LOWS",
   "Evanescence":"Evanescence",
   "Wicked":"Wicked","私立恵比寿中学":"しりつえびすちゅうがく",
@@ -1624,6 +1627,15 @@ function showArtistDetail(name) {
 // ===== 公開履歴（あさがおねえさんが最近歌った曲。メモから手動で更新） =====
 // 形式: { id: 曲番号, date: "MM/DD" }
 const publicHistory = [
+  // 最新
+  { id: 625 },  // 星の砂 / 小柳ルミ子
+  { id: 322 },  // 見上げてごらん夜の星を / 坂本九
+  { id: 629 },  // 星のかけらを探しに行こう Again / 福耳
+  { id: 319 },  // 夏のお嬢さん / 榊原郁恵
+  { id: 630 },  // スターゲイザー / スピッツ
+  { id: 614 },  // 秘密の花園 / 松田聖子
+  { id: 589 },  // 樹海の糸 / Cocco
+  { id: 24 },   // Heaven is a place on earth / Belinda Carlisle
   // 4/26 配信
   { id: 458 },  // M / 浜崎あゆみ
   { id: 11 },   // 初日 / AKB48
